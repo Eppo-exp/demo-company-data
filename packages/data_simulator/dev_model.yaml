@@ -1,0 +1,81 @@
+sample_size: 10
+start_date: 2023-01-01
+end_date: 2023-12-31
+entity_name: User
+
+dimensions:
+
+  user_persona:
+    name: User Persona
+    values:
+      - id: designer
+        name: Designer
+        weight: 0.5
+      - id: casual_user
+        name: Casual User
+        weight: 0.5
+
+  device_type:
+    name: Device Type
+    values:
+      - id: ios
+        name: iOS
+        weight: 0.25
+      - id: android
+        name: Android
+        weight: 0.25
+      - id: web
+        name: Web
+        weight: 0.5
+
+
+experiments:
+
+    new_onboarding:
+        name: New Onboarding
+        start_date: 2023-03-01
+        end_date: 2023-05-29
+        variants:
+          - id: control
+            name: Control
+            weight: 0.5
+          - id: test
+            name: Test
+            weight: 0.5
+
+    search_ranking_algorithm:
+        name: Search Ranking Algorithm
+        start_date: 2023-05-01
+        end_date: 2023-08-29
+        variants:
+          - id: control
+            name: Control
+            weight: 0.5
+          - id: xgboost
+            name: XGBoost
+            weight: 0.5
+          - id: neural_net
+            name: Neural Network
+            weight: 0.5
+
+metrics:
+
+  revenue:
+    name: Revenue
+    model: poisson_normal
+    params:
+      lambda:
+        - effect: 1
+        - effect: 0.05
+          cond:
+            - type: experiment
+              experiment: new_onboarding
+              variant: test
+        - effect: -0.15
+          cond:
+            - type: experiment
+              experiment: new_onboarding
+              variant: test
+            - type: dimension
+              id: user_persona
+              value: designer
