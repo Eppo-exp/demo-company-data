@@ -56,6 +56,7 @@ class DataSimulator:
 
                 assignments_data.append(assignment)
         
+        # TODO: assignments should contain subject dimensions too
         self.assignments = assignments_data
     
     def get_active_experiments(self, date, _):
@@ -73,6 +74,7 @@ class DataSimulator:
         ]
         return enrolled_experiments
     
+    # rename this "evaluate conditions"
     def compute_model_param(self, conditions, subject, active_experiments):
         parameter = 0
         for condition in conditions:
@@ -111,8 +113,17 @@ class DataSimulator:
 
         return parameter
 
-
+    # rename this "compute_subject_params"
     def generate_facts(self):
+        
+        # for each subject:
+        #    get dimension values
+        #    for each day:
+        #       get experiment variant status 
+        #       for each metric:
+        #           ...compute model parameters (function of experiment variants, dimension values)
+        #           simulate metric
+        #           append to data if value > 0
 
         self.facts = []
 
@@ -143,23 +154,24 @@ class DataSimulator:
                                 '_lambda': _lambda
                             }
                         )
-
-
-
-                
-
-
-
-        # √for each subject:
-        #    √get dimension values
-        #    √for each day:
-        #       √get experiment variant status 
-        #       √for each metric:
-        #           ...compute model parameters (function of experiment variants, dimension values)
-        #           simulate metric
-        #           append to data if value > 0
         pass
 
+    def simulate_facts():
+        # for each day:
+        #   for each user:
+        #     simulate event count
+        #     for each event count:
+        #       for each event fact (binomial, normal, exponential):
+        #         simulate event fact value
+
+        # example result
+        # self.facts: [
+        #   revenue: <data frame with cols {subject}_id, timestamp, {fact_name_1}, ...>,
+        #   sessions: ...,
+        #   ...
+        #]
+        pass
+    
 
 # Sample YAML content
 yaml_content = """
