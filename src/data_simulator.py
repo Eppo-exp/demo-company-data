@@ -1,16 +1,22 @@
 import yaml
 import random
 import pandas as pd
+import yaml
+import numpy as np
+from itertools import chain
 from datetime import datetime, timedelta
 
+def to_under_case(x):
+    return x.replace(' ', '_').lower()
+
 class DataSimulator:
-    def __init__(self, yaml_content):
-        self.config = yaml.safe_load(yaml_content)
+    def __init__(self, config):
+        self.config = config
         self.sample_size = self.config.get('sample_size', 1000)
         self.entity_name = self.config['entity_name']
         self.experiments = self.config.get('experiments', {})
         self.dimensions = self.config.get('dimensions', {})
-        self.metrics = self.config.get('metrics')
+        self.fact_sources = self.config.get('fact_sources')
 
         self.entity_column = self.entity_name.lower() + '_id'
 
@@ -54,9 +60,11 @@ class DataSimulator:
                     weights=[var.get('weight', 1) for var in exp_info['variants']]
                 )[0]
 
+                # add dimensional data
+                assignment.update(self.subjects[_])
+
                 assignments_data.append(assignment)
         
-        # TODO: assignments should contain subject dimensions too
         self.assignments = assignments_data
     
     def get_active_experiments(self, date, _):
@@ -73,9 +81,8 @@ class DataSimulator:
                 and a['experiment'] in live_experiments
         ]
         return enrolled_experiments
-    
-    # rename this "evaluate conditions"
-    def compute_model_param(self, conditions, subject, active_experiments):
+
+    def evaluate_conditions(self, conditions, subject, active_experiments):
         parameter = 0
         for condition in conditions:
 
@@ -113,8 +120,7 @@ class DataSimulator:
 
         return parameter
 
-    # rename this "compute_subject_params"
-    def generate_facts(self):
+    def compute_subject_params(self):
         
         # for each subject:
         #    get dimension values
@@ -125,52 +131,120 @@ class DataSimulator:
         #           simulate metric
         #           append to data if value > 0
 
-        self.facts = []
-
         # create date array
         date_array = pd.date_range(
             start=self.config['start_date'], 
             end=self.config['end_date']
         )
 
-        for _ in range(self.sample_size):
-            _subject = [u for u in self.subjects if u[self.entity_column] == _]
-            for date in date_array:
+        # list of fact sources
+        self.fact_source_daily_params = {}
 
-                active_experiments = self.get_active_experiments(date, _)
+        # for each fact source
+        for fact_source_id, fact_source_info in self.fact_sources.items():
 
-                for metric_id, metric_info in self.metrics.items():
-                    if metric_info['model'] == 'poisson_normal':
-                        _lambda = self.compute_model_param(
-                            metric_info['params']['lambda'], 
-                            _subject, 
-                            active_experiments
-                        )
+          subject_params_daily = []
 
-                        self.facts.append(
-                            {
-                                self.entity_column: _,
-                                'date': date,
-                                '_lambda': _lambda
-                            }
-                        )
-        pass
+          # for each subject
+          for _ in range(self.sample_size):
 
-    def simulate_facts():
-        # for each day:
-        #   for each user:
-        #     simulate event count
-        #     for each event count:
-        #       for each event fact (binomial, normal, exponential):
-        #         simulate event fact value
+              # get dimension values
+              _subject = [u for u in self.subjects if u[self.entity_column] == _]
 
-        # example result
-        # self.facts: [
-        #   revenue: <data frame with cols {subject}_id, timestamp, {fact_name_1}, ...>,
-        #   sessions: ...,
-        #   ...
-        #]
-        pass
+              # for each day
+              for date in date_array:
+
+                  # get active experiments
+                  active_experiments = self.get_active_experiments(date, _)
+
+                  # compute frequency
+                  _lambda = self.evaluate_conditions(
+                    fact_source_info['frequency'],
+                    _subject, 
+                    active_experiments
+                  )
+
+                  fact_params = {
+                    "frequency": _lambda,
+                    "fact_values": []
+                  }
+
+                  for fact in fact_source_info['fact_values']:
+                      fact_value_params = {
+                        "name": fact["name"],
+                        "model": fact['model'],
+                      }
+
+                      for param_id, param_info in fact['params'].items():
+
+                          param_value = self.evaluate_conditions(
+                              param_info,
+                              _subject, 
+                              active_experiments
+                          )
+
+                          fact_value_params[param_id] = param_value
+
+                      fact_params['fact_values'].append(fact_value_params)
+
+                  # append
+                  subject_params_daily.append(
+                      {
+                          self.entity_column: _,
+                          'date': date,
+                          'fact_params': fact_params
+                      }
+                  )
+ 
+          self.fact_source_daily_params[fact_source_id] = subject_params_daily
+
+    def simulate_fact(self, fact_params, subject_id, date):
+
+        fact_events = []
+
+        fact_count = np.random.poisson(fact_params['frequency'], 1)
+
+        for i in range(fact_count[0]):
+
+          fact_event = {'date': date}
+          fact_event[self.entity_column] = subject_id
+
+          for fact in fact_params['fact_values']:
+            if fact['model'] == 'normal':
+              sim_value = np.random.normal(fact['mu'], fact['sigma'], 1)[0]
+            elif fact['model'] == 'bernoulli':
+              sim_value = np.random.binomial(1, fact['rate'], 1)[0]
+              if sim_value == 0:
+                sim_value = None
+            else:
+              raise Exception('Invalid fact model: ' + fact['model'])
+            fact_event[to_under_case(fact['name'])] = sim_value
+
+            fact_events.append(fact_event)
+        
+        return fact_events
+
+
+      
+
+    def simulate_facts(self):
+
+      self.fact_source_tables = {}
+
+      for fact_source_id, fact_source_param_info in generator.fact_source_daily_params.items():
+
+        fact_source_data = []
+        for fsdp in fact_source_param_info:
+          fdsp_sim = self.simulate_fact(
+              fsdp['fact_params'],
+              fsdp[self.entity_column],
+              fsdp['date']
+            )
+          if len(fdsp_sim):
+            fact_source_data.append(fdsp_sim)
+        
+        self.fact_source_tables[fact_source_id] = list(chain(*fact_source_data))
+
     
 
 # Sample YAML content
@@ -258,16 +332,20 @@ metrics:
               value: designer
 """
 
+with open('use-cases/dev_model_v2.yml', 'r') as file:
+  config = yaml.safe_load(file)
 
-generator = DataSimulator(yaml_content)
+generator = DataSimulator(config)
 generator.generate_subjects()
 generator.generate_assignments()
-generator.generate_facts()
+generator.compute_subject_params()
+generator.simulate_facts()
 
+print('SUBJECT -------------------')
 print(pd.DataFrame(generator.subjects))
+print('ASSIGNMENTS -------------------')
 print(pd.DataFrame(generator.assignments))
-print(pd.DataFrame(generator.facts))
-
-print(
-    pd.DataFrame(generator.facts)['_lambda'].value_counts()
-)
+print('REVENUE -------------------')
+print(pd.DataFrame(generator.fact_source_tables['revenue']))
+print('SUPPORT ISSUES -------------------')
+print(pd.DataFrame(generator.fact_source_tables['support_tickets']))

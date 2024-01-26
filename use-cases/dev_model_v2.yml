@@ -58,18 +58,18 @@ experiments:
             name: Neural Network
             weight: 0.5
 
-facts:
+fact_sources:
 
   revenue:
     name: Purchase
     frequency:
-      effect: 1
-      effect: 0.05
+      - effect: 1
+      - effect: 0.05
         cond:
           - type: experiment
             experiment: new_onboarding
             variant: test
-            effect: -0.15
+      - effect: -0.15
         cond:
           - type: experiment
             experiment: new_onboarding
@@ -79,8 +79,26 @@ facts:
             value: designer
             effect: -0.05
     fact_values:
-      - name: Revenue Amount
+      - name: Gross Revenue
         model: normal
         params:
           mu: 
-            -
+            - effect: 20
+          sigma:
+            - effect: 20
+      - name: Voided
+        model: bernoulli
+        params:
+          rate:
+            - effect: 0.05
+  
+  support_tickets:
+    name: Support Tickets
+    frequency:
+      - effect: 0.3
+    fact_values:
+      - name: Support Ticket
+        model: bernoulli
+        params:
+          rate: 
+            - effect: 1
