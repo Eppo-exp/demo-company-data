@@ -224,14 +224,11 @@ class DataSimulator:
         
         return fact_events
 
-
-      
-
     def simulate_facts(self):
 
       self.fact_source_tables = {}
 
-      for fact_source_id, fact_source_param_info in generator.fact_source_daily_params.items():
+      for fact_source_id, fact_source_param_info in self.fact_source_daily_params.items():
 
         fact_source_data = []
         for fsdp in fact_source_param_info:
@@ -245,107 +242,25 @@ class DataSimulator:
         
         self.fact_source_tables[fact_source_id] = list(chain(*fact_source_data))
 
-    
 
-# Sample YAML content
-yaml_content = """
-sample_size: 10
-start_date: 2023-01-01
-end_date: 2023-12-31
-entity_name: User
-dimensions:
-  user_persona:
-    name: User Persona
-    values:
-      - id: designer
-        name: Designer
-        weight: 0.5
-      - id: casual_user
-        name: Casual User
-        weight: 0.5
-  device_type:
-    name: Device Type
-    values:
-      - id: ios
-        name: iOS
-        weight: 0.25
-      - id: android
-        name: Android
-        weight: 0.25
-      - id: web
-        name: Web
-        weight: 0.5
-  device_type:
-    name: Device Type
-    values:
-      - id: ios
-        name: iOS
-        weight: 0.5
-      - id: android
-        name: Android
-        weight: 0.5
-experiments:
-    new_onboarding:
-        name: New Onboarding
-        start_date: 2023-03-01
-        end_date: 2023-05-29
-        variants:
-          - id: control
-            name: Control
-            weight: 0.5
-          - id: test
-            name: Test
-            weight: 0.5
-    search_ranking_algorithm:
-        name: Search Ranking Algorithm
-        start_date: 2023-05-01
-        end_date: 2023-08-29
-        variants:
-          - id: control
-            name: Control
-            weight: 0.33
-          - id: xgboost
-            name: XGBoost
-            weight: 0.33
-          - id: neural_net
-            name: Neural Network
-            weight: 0.34
-metrics:
-  revenue:
-    name: Revenue
-    model: poisson_normal
-    params:
-      lambda:
-        - effect: 1
-        - effect: 0.05
-          cond:
-            - type: experiment
-              experiment: new_onboarding
-              variant: test
-        - effect: -0.15
-          cond:
-            - type: experiment
-              experiment: new_onboarding
-              variant: test
-            - type: dimension
-              id: user_persona
-              value: designer
-"""
+if __name__ == '__main__':
+    with open('use-cases/dev_model_v2.yml', 'r') as file:
+        config = yaml.safe_load(file)
 
-with open('use-cases/dev_model_v2.yml', 'r') as file:
-  config = yaml.safe_load(file)
+    generator = DataSimulator(config)
+    generator.generate_subjects()
+    generator.generate_assignments()
+    generator.compute_subject_params()
+    generator.simulate_facts()
 
-generator = DataSimulator(config)
-generator.generate_subjects()
-generator.generate_assignments()
-generator.compute_subject_params()
-generator.simulate_facts()
+    print('SUBJECT -------------------')
+    print(pd.DataFrame(generator.subjects))
 
-print('SUBJECT -------------------')
-print(pd.DataFrame(generator.subjects))
-print('ASSIGNMENTS -------------------')
-print(pd.DataFrame(generator.assignments))
-print('REVENUE -------------------')
-print(pd.DataFrame(generator.fact_source_tables['revenue']))
-print('SUPPORT ISSUES -------------------')
-print(pd.DataFrame(generator.fact_source_tables['support_tickets']))
+    print('ASSIGNMENTS -------------------')
+    print(pd.DataFrame(generator.assignments))
+
+    print('REVENUE -------------------')
+    print(pd.DataFrame(generator.fact_source_tables['revenue']))
+
+    print('SUPPORT ISSUES -------------------')
+    print(pd.DataFrame(generator.fact_source_tables['support_tickets']))

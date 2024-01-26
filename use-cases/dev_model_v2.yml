@@ -1,4 +1,4 @@
-sample_size: 10
+sample_size: 1000
 start_date: 2023-01-01
 end_date: 2023-12-31
 entity_name: User
@@ -64,12 +64,12 @@ fact_sources:
     name: Purchase
     frequency:
       - effect: 1
-      - effect: 0.05
+      - effect: 3
         cond:
           - type: experiment
             experiment: new_onboarding
             variant: test
-      - effect: -0.15
+      - effect: -2
         cond:
           - type: experiment
             experiment: new_onboarding
@@ -77,7 +77,6 @@ fact_sources:
           - type: dimension
             id: user_persona
             value: designer
-            effect: -0.05
     fact_values:
       - name: Gross Revenue
         model: normal
@@ -85,7 +84,7 @@ fact_sources:
           mu: 
             - effect: 20
           sigma:
-            - effect: 20
+            - effect: 4
       - name: Voided
         model: bernoulli
         params:
