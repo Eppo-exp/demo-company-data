@@ -41,28 +41,6 @@ class SnowflakeConnector:
 
     def push_table(self, table_name, table_data):
 
-        #create_table_sql = f"""
-        #    CREATE OR REPLACE TABLE {self.snowflake_database}.{self.snowflake_schema}.{table_name} (
-        #        DATE DATE,   
-        #    """
-
-        #for column_name, data_type in zip(table_data.columns, table_data.dtypes):
-        #    if column_name != 'date':
-        #        create_table_sql += f"{column_name} {snowflake_data_types[str(data_type)]}, "
-
-        #create_table_sql = create_table_sql.rstrip(', ') + ")"
-
-        # Execute the create or replace table SQL
-        #self.cursor.execute(create_table_sql)
-
-        # Use Pandas to upload DataFrame data to Snowflake
-        #table_data.to_sql(table_name, self.connection, schema=self.snowflake_schema, index=False, if_exists='replace', method='multi')
-
-        # Commit the changes
-        #self.connection.commit()
-
-        #insert_query = f"INSERT INTO {self.snowflake_database}.{self.snowflake_schema}.{table_name} VALUES (?, ?, ?, ?, ?, ?)"
-        
         connection_parameters = {
             "account": os.getenv("SNOWFLAKE_ACCOUNT"),
             "user": os.getenv("SNOWFLAKE_USER"),
@@ -86,13 +64,11 @@ class SnowflakeConnector:
             overwrite=True, 
         )
 
-        # Execute the query
-        #self.cursor.executemany(insert_query, table_data)
-        
-        # Commit the changes
+        # Commit the changes (DO I NEED THIS?)
         self.connection.commit()
 
     def close_connection(self):
+        
         # Close the cursor and connection when done
         self.cursor.close()
         self.connection.close()

@@ -16,7 +16,7 @@ from snowflake_connector import SnowflakeConnector
 with open(profile_file_path) as file:
     dbt_profile = yaml.safe_load(file)
 
-os.environ["SNOWFLAKE_ACCOUNT"] = dbt_profile['eppo_snowflake']['outputs']['dev']['account']
+#os.environ["SNOWFLAKE_ACCOUNT"] = dbt_profile['eppo_snowflake']['outputs']['dev']['account']
 os.environ["SNOWFLAKE_USER"] = dbt_profile['eppo_snowflake']['outputs']['dev']['user']
 os.environ["SNOWFLAKE_PASSWORD"] = dbt_profile['eppo_snowflake']['outputs']['dev']['password']
 os.environ["SNOWFLAKE_WAREHOUSE"]  = dbt_profile['eppo_snowflake']['outputs']['dev']['warehouse']
