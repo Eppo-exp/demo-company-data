@@ -1,5 +1,5 @@
-sample_size: 1000
-start_date: 2023-01-01
+sample_size: 20000
+start_date: 2023-09-01
 end_date: 2023-12-31
 entity_name: User
 
@@ -33,8 +33,8 @@ experiments:
 
     new_onboarding:
         name: New Onboarding
-        start_date: 2023-03-01
-        end_date: 2023-05-29
+        start_date: 2023-09-01
+        end_date: 2023-10-01
         variants:
           - id: control
             name: Control
@@ -45,8 +45,8 @@ experiments:
 
     search_ranking_algorithm:
         name: Search Ranking Algorithm
-        start_date: 2023-05-01
-        end_date: 2023-08-29
+        start_date: 2023-09-15
+        end_date: 2023-10-15
         variants:
           - id: control
             name: Control

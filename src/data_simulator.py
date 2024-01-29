@@ -3,11 +3,116 @@ import random
 import pandas as pd
 import yaml
 import numpy as np
-from itertools import chain
+from itertools import chain, product
 from datetime import datetime, timedelta
+import logging
+from snowflake_connector import SnowflakeConnector
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler()
+    ]
+)
 
 def to_under_case(x):
     return x.replace(' ', '_').lower()
+
+def evaluate_condition(x, conditions):
+    parameter = 0
+    for condition in conditions:
+
+        if 'cond' not in condition:
+            parameter += condition['effect']
+        
+        else:
+            included = True
+            for cond in condition['cond']:
+
+                if cond['type'] == 'experiment':
+
+                    if pd.isna(x['experiments']):
+                        included = False
+                    
+                    else:
+                        experiment_variant = x['experiments'].get(cond['experiment']) 
+                        if experiment_variant is not None:
+                            if experiment_variant != cond['variant']:
+                                included = False
+
+                    
+                if cond['type'] == 'dimension':
+                    if x.get(cond['id']) != cond['value']:
+                        included = False
+
+            if included:
+                parameter += condition['effect'] 
+
+    return parameter
+
+def evaluate_conditions(x, fact_source_info):
+
+    freq = evaluate_condition(x, fact_source_info['frequency'])
+
+    fv_params = {'frequency': freq, "values": []}
+
+    for fv in fact_source_info['fact_values']:
+
+        if fv['model'] == 'normal':
+            mu = evaluate_condition(x, fv['params']['mu'])
+            sigma = evaluate_condition(x, fv['params']['sigma'])
+            fv_params['values'].append({
+                'name': fv['name'],
+                'model': fv['model'],
+                'mu': mu,
+                'sigma': sigma
+            })
+
+        elif fv['model'] == 'bernoulli':
+            rate = evaluate_condition(x, fv['params']['rate'])
+            fv_params['values'].append({
+                'name': fv['name'],
+                'model': fv['model'],
+                'rate': rate
+            })
+
+        else:
+            raise Exception('invalid fact value model: ' + fv['model'])
+
+    return fv_params
+
+def simulate_fact(x, param_feild, entity_column):
+
+    fact_events = []
+    fact_params = x.get(param_feild)
+
+    fact_count = np.random.poisson(fact_params['frequency'], 1)
+
+    for i in range(fact_count[0]):
+
+        fact_event = {'date': x['date']}
+        fact_event[entity_column] = x[entity_column]
+
+        for fact in fact_params['values']:
+
+            if fact['model'] == 'normal':
+                sim_value = np.random.normal(fact['mu'], fact['sigma'], 1)[0]
+
+            elif fact['model'] == 'bernoulli':
+                sim_value = np.random.binomial(1, fact['rate'], 1)[0]
+                if sim_value == 0:
+                    sim_value = None
+
+            else:
+                raise Exception('Invalid fact model: ' + fact['model'])
+        
+            fact_event[to_under_case(fact['name'])] = sim_value
+
+        fact_events.append(fact_event)
+    
+    return fact_events
+
 
 class DataSimulator:
     def __init__(self, config):
@@ -17,9 +122,17 @@ class DataSimulator:
         self.experiments = self.config.get('experiments', {})
         self.dimensions = self.config.get('dimensions', {})
         self.fact_sources = self.config.get('fact_sources')
-
         self.entity_column = self.entity_name.lower() + '_id'
 
+    # utility function to get a merge-able data frame
+    def experiment_dates(self):
+        x = {'experiment': [], 'experiment_end_date': []}
+        for experiment_name, details in self.experiments.items():
+            x['experiment'].append(experiment_name)
+            x['experiment_end_date'].append(details['end_date'])
+        return pd.DataFrame(x)
+
+    # to do: create as data frame
     def generate_subjects(self):
         
         self.subjects = []
@@ -34,7 +147,8 @@ class DataSimulator:
                 )[0]
         
             self.subjects.append(subject)
-
+    
+    # to do: create as data frame
     def generate_assignments(self):
         
         assignments_data = []
@@ -66,201 +180,115 @@ class DataSimulator:
                 assignments_data.append(assignment)
         
         self.assignments = assignments_data
-    
-    def get_active_experiments(self, date, _):
-        live_experiments = [
-            exp_id
-            for exp_id, exp_info in self.experiments.items() 
-            if exp_info['start_date'] <= date.date() and exp_info['end_date'] >= date.date()
-        ]
-        enrolled_experiments = [
-            a
-            for a in self.assignments
-            if a[self.entity_column] == _
-                and datetime.strptime(a['date'], '%Y-%m-%d') <= date
-                and a['experiment'] in live_experiments
-        ]
-        return enrolled_experiments
 
-    def evaluate_conditions(self, conditions, subject, active_experiments):
-        parameter = 0
-        for condition in conditions:
+    def get_subject_params_inputs(self):
 
-            if 'cond' not in condition:
-                parameter += condition['effect']
-            
-            else:
-                included = True
-                for cond in condition['cond']:
-
-                    if cond['type'] == 'experiment':
-
-                        if len(active_experiments) == 0:
-                            included = False
-                        
-                        else:
-                            exp_var = [
-                                a['variant'] 
-                                for a in active_experiments 
-                                if a['experiment'] == cond['experiment']
-                            ]
-                            
-                            if len(exp_var) == 0:
-                                included = False
-                            
-                            elif exp_var[0] != cond['variant']:
-                                included = False
-                        
-                    if cond['type'] == 'dimension':
-                        if subject[0][cond['id']] != cond['value']:
-                            included = False
-
-                if included:
-                    parameter += condition['effect'] 
-
-        return parameter
-
-    def compute_subject_params(self):
-        
-        # for each subject:
-        #    get dimension values
-        #    for each day:
-        #       get experiment variant status 
-        #       for each metric:
-        #           ...compute model parameters (function of experiment variants, dimension values)
-        #           simulate metric
-        #           append to data if value > 0
-
-        # create date array
-        date_array = pd.date_range(
-            start=self.config['start_date'], 
-            end=self.config['end_date']
+        self.daily_subject_params = pd.DataFrame(
+            list(product(
+                pd.date_range(start=self.config['start_date'], end=self.config['end_date']),
+                range(self.sample_size)
+            )),
+            columns = ['date', self.entity_column]
         )
 
-        # list of fact sources
-        self.fact_source_daily_params = {}
+        active_experiments = self.daily_subject_params.merge(
+            pd.DataFrame(self.assignments), 
+            on = 'user_id',
+            suffixes=['', '_assigned']
+        )
 
-        # for each fact source
+        active_experiments = active_experiments.merge(
+            self.experiment_dates(),
+            on='experiment'
+        )
+
+        date_mask = \
+            (active_experiments['date_assigned'] \
+                <= active_experiments['date']) \
+                    & (active_experiments['date'] \
+                        <= active_experiments['experiment_end_date'])
+
+        active_experiments = active_experiments[date_mask].groupby(
+            [self.entity_column, 'date']
+        ).apply(lambda x: dict(zip(x['experiment'], x['variant']))).reset_index(name='experiments')
+
+        self.daily_subject_params = self.daily_subject_params.merge(
+            active_experiments,
+            on = [self.entity_column, 'date'],
+            how = 'left'
+        )
+
+        self.daily_subject_params['experiments'] = self.daily_subject_params['experiments'].fillna({})
+
+        self.daily_subject_params = self.daily_subject_params.merge(pd.DataFrame(self.subjects))
+
+    def compute_subject_params(self):
+
         for fact_source_id, fact_source_info in self.fact_sources.items():
 
-          subject_params_daily = []
-
-          # for each subject
-          for _ in range(self.sample_size):
-
-              # get dimension values
-              _subject = [u for u in self.subjects if u[self.entity_column] == _]
-
-              # for each day
-              for date in date_array:
-
-                  # get active experiments
-                  active_experiments = self.get_active_experiments(date, _)
-
-                  # compute frequency
-                  _lambda = self.evaluate_conditions(
-                    fact_source_info['frequency'],
-                    _subject, 
-                    active_experiments
-                  )
-
-                  fact_params = {
-                    "frequency": _lambda,
-                    "fact_values": []
-                  }
-
-                  for fact in fact_source_info['fact_values']:
-                      fact_value_params = {
-                        "name": fact["name"],
-                        "model": fact['model'],
-                      }
-
-                      for param_id, param_info in fact['params'].items():
-
-                          param_value = self.evaluate_conditions(
-                              param_info,
-                              _subject, 
-                              active_experiments
-                          )
-
-                          fact_value_params[param_id] = param_value
-
-                      fact_params['fact_values'].append(fact_value_params)
-
-                  # append
-                  subject_params_daily.append(
-                      {
-                          self.entity_column: _,
-                          'date': date,
-                          'fact_params': fact_params
-                      }
-                  )
- 
-          self.fact_source_daily_params[fact_source_id] = subject_params_daily
-
-    def simulate_fact(self, fact_params, subject_id, date):
-
-        fact_events = []
-
-        fact_count = np.random.poisson(fact_params['frequency'], 1)
-
-        for i in range(fact_count[0]):
-
-          fact_event = {'date': date}
-          fact_event[self.entity_column] = subject_id
-
-          for fact in fact_params['fact_values']:
-            if fact['model'] == 'normal':
-              sim_value = np.random.normal(fact['mu'], fact['sigma'], 1)[0]
-            elif fact['model'] == 'bernoulli':
-              sim_value = np.random.binomial(1, fact['rate'], 1)[0]
-              if sim_value == 0:
-                sim_value = None
-            else:
-              raise Exception('Invalid fact model: ' + fact['model'])
-            fact_event[to_under_case(fact['name'])] = sim_value
-
-            fact_events.append(fact_event)
-        
-        return fact_events
+            self.daily_subject_params[fact_source_id] = self.daily_subject_params.apply(
+                evaluate_conditions,
+                args=(fact_source_info, ),
+                axis=1
+            )
 
     def simulate_facts(self):
 
       self.fact_source_tables = {}
 
-      for fact_source_id, fact_source_param_info in self.fact_source_daily_params.items():
+      for fact_source_id, fact_source_info in self.config['fact_sources'].items():
 
-        fact_source_data = []
-        for fsdp in fact_source_param_info:
-          fdsp_sim = self.simulate_fact(
-              fsdp['fact_params'],
-              fsdp[self.entity_column],
-              fsdp['date']
+        fact_source_data = self.daily_subject_params.apply(
+            simulate_fact, 
+            args=(fact_source_id, self.entity_column), 
+            axis=1
+        )
+
+        self.fact_source_tables[fact_source_id] = pd.DataFrame(
+            list(chain(*fact_source_data))
+        )
+
+    def simulate(self):
+
+        logging.info('generating subjects')
+        self.generate_subjects()
+
+        logging.info('generating assignments')
+        self.generate_assignments()
+
+        logging.info('preparing subject parameter inputs')
+        self.get_subject_params_inputs()
+
+        logging.info('computing subject parameters')
+        self.compute_subject_params()
+
+        logging.info('simulating facts')
+        self.simulate_facts()
+    
+    def log_data_summary(self):
+
+        logging.info('assignments')
+        logging.info(print(pd.DataFrame(self.subjects)))
+
+        for fact_source_table_id, fact_source_data in self.fact_source_tables.items():
+            logging.info(fact_source_table_id)
+            logging.info(fact_source_data)
+
+    def push_to_snowflake(self):
+
+        logging.info('connecting to Snowflake')
+        snowflake_connection = SnowflakeConnector()
+
+        logging.info('pushing assignments table')
+        snowflake_connection.push_table(
+            'assignments', 
+            pd.DataFrame(self.assignments)
+        )
+
+        for fact_source_table_id, fact_source_data in self.fact_source_tables.items():
+            logging.info('pushing ' + fact_source_table_id + ' table')
+            snowflake_connection.push_table(
+                fact_source_table_id, 
+                fact_source_data
             )
-          if len(fdsp_sim):
-            fact_source_data.append(fdsp_sim)
-        
-        self.fact_source_tables[fact_source_id] = list(chain(*fact_source_data))
 
-
-if __name__ == '__main__':
-    with open('use-cases/dev_model_v2.yml', 'r') as file:
-        config = yaml.safe_load(file)
-
-    generator = DataSimulator(config)
-    generator.generate_subjects()
-    generator.generate_assignments()
-    generator.compute_subject_params()
-    generator.simulate_facts()
-
-    print('SUBJECT -------------------')
-    print(pd.DataFrame(generator.subjects))
-
-    print('ASSIGNMENTS -------------------')
-    print(pd.DataFrame(generator.assignments))
-
-    print('REVENUE -------------------')
-    print(pd.DataFrame(generator.fact_source_tables['revenue']))
-
-    print('SUPPORT ISSUES -------------------')
-    print(pd.DataFrame(generator.fact_source_tables['support_tickets']))
