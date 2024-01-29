@@ -8,13 +8,15 @@ from datetime import datetime, timedelta
 import logging
 from snowflake_connector import SnowflakeConnector
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler()
-    ]
-)
+console_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(console_formatter)
+
+logger = logging.getLogger(__name__)
+logger.level=logging.INFO
+logger.addHandler(console_handler) 
+logger.propagate = False
+
 
 def to_under_case(x):
     return x.replace(' ', '_').lower()
@@ -250,43 +252,43 @@ class DataSimulator:
 
     def simulate(self):
 
-        logging.info('generating subjects')
+        logger.info('generating subjects')
         self.generate_subjects()
 
-        logging.info('generating assignments')
+        logger.info('generating assignments')
         self.generate_assignments()
 
-        logging.info('preparing subject parameter inputs')
+        logger.info('preparing subject parameter inputs')
         self.get_subject_params_inputs()
 
-        logging.info('computing subject parameters')
+        logger.info('computing subject parameters')
         self.compute_subject_params()
 
-        logging.info('simulating facts')
+        logger.info('simulating facts')
         self.simulate_facts()
     
     def log_data_summary(self):
 
-        logging.info('assignments')
-        logging.info(print(pd.DataFrame(self.subjects)))
+        logger.info('assignments')
+        logger.info(print(pd.DataFrame(self.subjects)))
 
         for fact_source_table_id, fact_source_data in self.fact_source_tables.items():
-            logging.info(fact_source_table_id)
-            logging.info(fact_source_data)
+            logger.info(fact_source_table_id)
+            logger.info(fact_source_data)
 
     def push_to_snowflake(self):
 
-        logging.info('connecting to Snowflake')
+        logger.info('connecting to Snowflake')
         snowflake_connection = SnowflakeConnector()
 
-        logging.info('pushing assignments table')
+        logger.info('pushing assignments table')
         snowflake_connection.push_table(
             'assignments', 
             pd.DataFrame(self.assignments)
         )
 
         for fact_source_table_id, fact_source_data in self.fact_source_tables.items():
-            logging.info('pushing ' + fact_source_table_id + ' table')
+            logger.info('pushing ' + fact_source_table_id + ' table')
             snowflake_connection.push_table(
                 fact_source_table_id, 
                 fact_source_data

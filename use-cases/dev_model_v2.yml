@@ -1,6 +1,6 @@
 sample_size: 20000
 start_date: 2023-09-01
-end_date: 2023-12-31
+end_date: 2023-10-01
 entity_name: User
 
 dimensions:
@@ -63,13 +63,13 @@ fact_sources:
   revenue:
     name: Purchase
     frequency:
-      - effect: 1
-      - effect: 3
+      - effect: 0.3
+      - effect: 0.018
         cond:
           - type: experiment
             experiment: new_onboarding
             variant: test
-      - effect: -2
+      - effect: -0.006
         cond:
           - type: experiment
             experiment: new_onboarding
@@ -83,8 +83,13 @@ fact_sources:
         params:
           mu: 
             - effect: 20
+            - effect: -0.1
+              cond:
+                - type: experiment
+                  experiment: new_onboarding
+                  variant: test
           sigma:
-            - effect: 4
+            - effect: 10
       - name: Voided
         model: bernoulli
         params:
