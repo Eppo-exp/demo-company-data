@@ -23,67 +23,26 @@ def to_under_case(x):
     return x.replace(' ', '_').lower()
 
 
-def evaluate_condition(x, conditions):
-    parameter = 0
+def evaluate_condition(df, conditions):
+    parameters = np.zeros(len(df))
     for condition in conditions:
-
         if 'cond' not in condition:
-            parameter += condition['effect']
+            parameters += condition['effect']
 
         else:
-            included = True
+            # Initially assume everyone is included, exclude them if they fail to meet a condition
+            included = np.ones(len(df), dtype=bool)
             for cond in condition['cond']:
-
                 if cond['type'] == 'experiment':
-
-                    if pd.isna(x['experiments']):
-                        included = False
-
-                    else:
-                        experiment_variant = x['experiments'].get(cond['experiment'])
-                        if experiment_variant is not None:
-                            if experiment_variant != cond['variant']:
-                                included = False
+                    variant_column = f"{cond['experiment']}_assignment"
+                    included &= (df[variant_column] == cond['variant'])
 
                 if cond['type'] == 'dimension':
-                    if x.get(cond['id']) != cond['value']:
-                        included = False
+                    included &= (df[cond['id']] == cond['value'])
 
-            if included:
-                parameter += condition['effect']
+            parameters += condition['effect'] * included.values
 
-    return parameter
-
-
-def evaluate_conditions(x, fact_source_info):
-    freq = evaluate_condition(x, fact_source_info['frequency'])
-
-    fv_params = {'frequency': freq, "values": []}
-
-    for fv in fact_source_info['fact_values']:
-
-        if fv['model'] == 'normal':
-            mu = evaluate_condition(x, fv['params']['mu'])
-            sigma = evaluate_condition(x, fv['params']['sigma'])
-            fv_params['values'].append({
-                'name': fv['name'],
-                'model': fv['model'],
-                'mu': mu,
-                'sigma': sigma
-            })
-
-        elif fv['model'] == 'bernoulli':
-            rate = evaluate_condition(x, fv['params']['rate'])
-            fv_params['values'].append({
-                'name': fv['name'],
-                'model': fv['model'],
-                'rate': rate
-            })
-
-        else:
-            raise Exception('invalid fact value model: ' + fv['model'])
-
-    return fv_params
+    return parameters
 
 
 def simulate_fact(x, param_feild, entity_column):
@@ -201,26 +160,15 @@ class DataSimulator:
                <= active_experiments['experiment_end_date'])
 
         # First, create a pivot table as before.
-        pivot_table = active_experiments[date_mask].pivot_table(
+        active_experiments = active_experiments[date_mask].pivot_table(
             index=[self.entity_column, 'date'],
             columns='experiment',
             values='variant',
             aggfunc='first'
         )
 
-        # Convert the pivot table to a dictionary of dictionaries.
-        experiments_dict = pivot_table.to_dict(orient='index')
-
-        # Remove experiments with a NaN variant
-        for entity_date_pair, assignments in experiments_dict.items():
-            experiments_dict[entity_date_pair] = {experiment: variant for experiment, variant in assignments.items() if
-                                                  pd.notnull(variant)}
-
-        # Convert the outer dictionary's keys to a DataFrame and merge it with the inner dictionaries.
-        active_experiments = (
-            pd.DataFrame(list(experiments_dict.keys()), columns=[self.entity_column, 'date'])
-            .assign(experiments=[experiments_dict[key] for key, value in experiments_dict.items() if value])
-        )
+        active_experiments.columns = [f"{column}_assignment" for column in active_experiments.columns]
+        active_experiments = active_experiments.reset_index()
         return active_experiments
 
     def get_subject_params_inputs(self):
@@ -240,32 +188,79 @@ class DataSimulator:
             how='left'
         )
 
-        self.daily_subject_params['experiments'].values[pd.isna(self.daily_subject_params['experiments'])] = {}
         self.daily_subject_params = self.daily_subject_params.merge(self.subjects)
 
+    # def compute_subject_params(self):
+    #
+    #     for fact_source_id, fact_source_info in self.fact_sources.items():
+    #         self.daily_subject_params[fact_source_id] = self.daily_subject_params.apply(
+    #             evaluate_conditions,
+    #             args=(fact_source_info,),
+    #             axis=1
+    #         )
+
+    def _get_daily_subject_params(self, fact_source_info):
+        params = self.evaluate_conditions(fact_source_info)
+        x = 3
+
     def compute_subject_params(self):
-
         for fact_source_id, fact_source_info in self.fact_sources.items():
-            self.daily_subject_params[fact_source_id] = self.daily_subject_params.apply(
-                evaluate_conditions,
-                args=(fact_source_info,),
-                axis=1
-            )
+            self.daily_subject_params[fact_source_id] = self._get_daily_subject_params(fact_source_info)
 
-    def simulate_facts(self):
+    def evaluate_conditions(self, fact_source_info):
+        freq = evaluate_condition(self.daily_subject_params, fact_source_info['frequency'])
 
-        self.fact_source_tables = {}
 
-        for fact_source_id, fact_source_info in self.config['fact_sources'].items():
-            fact_source_data = self.daily_subject_params.apply(
-                simulate_fact,
-                args=(fact_source_id, self.entity_column),
-                axis=1
-            )
 
-            self.fact_source_tables[fact_source_id] = pd.DataFrame(
-                list(chain(*fact_source_data))
-            )
+
+
+        fv_params = {'frequency': freq, "values": []}
+
+        for fv in fact_source_info['fact_values']:
+
+            if fv['model'] == 'normal':
+                mu = evaluate_condition(self.daily_subject_params, fv['params']['mu'])
+                sigma = evaluate_condition(self.daily_subject_params, fv['params']['sigma'])
+
+                fv_params['values'].append({
+                    'name': fv['name'],
+                    'model': fv['model'],
+                    'mu': mu,
+                    'sigma': sigma
+                })
+
+            elif fv['model'] == 'bernoulli':
+                rate = evaluate_condition(self.daily_subject_params, fv['params']['rate'])
+                fv_params['values'].append({
+                    'name': fv['name'],
+                    'model': fv['model'],
+                    'rate': rate
+                })
+
+            else:
+                raise Exception('invalid fact value model: ' + fv['model'])
+
+        return fv_params
+
+    # def simulate_facts(self):
+    #
+    #     self.fact_source_tables = {}
+    #
+    #     for fact_source_id, fact_source_info in self.config['fact_sources'].items():
+    #         fact_source_data = self.daily_subject_params.apply(
+    #             simulate_fact,
+    #             args=(fact_source_id, self.entity_column),
+    #             axis=1
+    #         )
+    #
+    #         self.fact_source_tables[fact_source_id] = pd.DataFrame(
+    #             list(chain(*fact_source_data))
+    #         )
+
+    # def simulate_facts(self):
+    #     fact_source = 'revenue'
+    #     fact_source_info = self.fact_sources[fact_source]
+    #     for fact
 
     def simulate(self):
 
