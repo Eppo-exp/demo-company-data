@@ -7,7 +7,7 @@ from itertools import chain, product
 from datetime import datetime, timedelta
 import logging
 from snowflake_connector import SnowflakeConnector
-
+from time import time
 console_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(console_formatter)
@@ -134,22 +134,15 @@ class DataSimulator:
             x['experiment_end_date'].append(details['end_date'])
         return pd.DataFrame(x)
 
-    # to do: create as data frame
     def generate_subjects(self):
-        
-        self.subjects = []
+        self.subjects = pd.DataFrame({
+            dim_id: np.random.choice(
+                a = [var['id'] for var in dim_info['values']],
+                p = [var['weight'] for var in dim_info['values']],
+                size = self.sample_size
+            ) for dim_id, dim_info in self.dimensions.items()
+        }).to_dict(orient='records')
 
-        for _ in range(self.sample_size):
-            subject = {}
-            subject[self.entity_column] = _
-            for dim_id, dim_info in self.dimensions.items():
-                subject[dim_id] = random.choices(
-                    population=[var['id'] for var in dim_info['values']],
-                    weights=[var['weight'] for var in dim_info['values']]
-                )[0]
-        
-            self.subjects.append(subject)
-    
     # to do: create as data frame
     def generate_assignments(self):
         
