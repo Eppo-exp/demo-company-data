@@ -22,6 +22,10 @@ with open('use-cases/dev_use_case.yml', 'r') as file:
   config = yaml.safe_load(file)
 
 generator = DataSimulator(config)
+from time import time
+t1 = time()
 generator.simulate()
+t2 = time()
+print(t2 - t1)
 generator.log_data_summary()
 # generator.push_to_snowflake()
