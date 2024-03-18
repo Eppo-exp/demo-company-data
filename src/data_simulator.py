@@ -190,77 +190,39 @@ class DataSimulator:
 
         self.daily_subject_params = self.daily_subject_params.merge(self.subjects)
 
-    # def compute_subject_params(self):
-    #
-    #     for fact_source_id, fact_source_info in self.fact_sources.items():
-    #         self.daily_subject_params[fact_source_id] = self.daily_subject_params.apply(
-    #             evaluate_conditions,
-    #             args=(fact_source_info,),
-    #             axis=1
-    #         )
-
-    def _get_daily_subject_params(self, fact_source_info):
-        params = self.evaluate_conditions(fact_source_info)
-        x = 3
-
     def compute_subject_params(self):
         for fact_source_id, fact_source_info in self.fact_sources.items():
             self.daily_subject_params[fact_source_id] = self._get_daily_subject_params(fact_source_info)
 
-    def evaluate_conditions(self, fact_source_info):
-        freq = evaluate_condition(self.daily_subject_params, fact_source_info['frequency'])
+    def simulate_fact(self, fact_source_info):
+        frequencies = evaluate_condition(self.daily_subject_params, fact_source_info['frequency'])
+        fact_counts = np.random.poisson(frequencies)
 
+        # Duplicates each subject param based on the fact counts
+        subject_fact_params = self.daily_subject_params.loc[self.daily_subject_params.index.repeat(fact_counts)].copy()
 
-
-
-
-        fv_params = {'frequency': freq, "values": []}
+        fact_source_table = subject_fact_params[[self.entity_column, 'date']].copy()
 
         for fv in fact_source_info['fact_values']:
 
             if fv['model'] == 'normal':
-                mu = evaluate_condition(self.daily_subject_params, fv['params']['mu'])
-                sigma = evaluate_condition(self.daily_subject_params, fv['params']['sigma'])
-
-                fv_params['values'].append({
-                    'name': fv['name'],
-                    'model': fv['model'],
-                    'mu': mu,
-                    'sigma': sigma
-                })
+                mu = evaluate_condition(subject_fact_params, fv['params']['mu'])
+                sigma = evaluate_condition(subject_fact_params, fv['params']['sigma'])
+                fact_source_table[fv['name']] = np.random.normal(mu, sigma)
 
             elif fv['model'] == 'bernoulli':
-                rate = evaluate_condition(self.daily_subject_params, fv['params']['rate'])
-                fv_params['values'].append({
-                    'name': fv['name'],
-                    'model': fv['model'],
-                    'rate': rate
-                })
+                rate = evaluate_condition(subject_fact_params, fv['params']['rate'])
+                fact_source_table[fv['name']] = np.random.binomial(1, rate)
 
             else:
                 raise Exception('invalid fact value model: ' + fv['model'])
 
-        return fv_params
+        return fact_source_table
 
-    # def simulate_facts(self):
-    #
-    #     self.fact_source_tables = {}
-    #
-    #     for fact_source_id, fact_source_info in self.config['fact_sources'].items():
-    #         fact_source_data = self.daily_subject_params.apply(
-    #             simulate_fact,
-    #             args=(fact_source_id, self.entity_column),
-    #             axis=1
-    #         )
-    #
-    #         self.fact_source_tables[fact_source_id] = pd.DataFrame(
-    #             list(chain(*fact_source_data))
-    #         )
-
-    # def simulate_facts(self):
-    #     fact_source = 'revenue'
-    #     fact_source_info = self.fact_sources[fact_source]
-    #     for fact
+    def simulate_facts(self):
+        self.fact_source_tables = {}
+        for fact_source_id, fact_source_info in self.config['fact_sources'].items():
+            self.fact_source_tables[fact_source_id] = self.simulate_fact(fact_source_info)
 
     def simulate(self):
 
@@ -272,9 +234,6 @@ class DataSimulator:
 
         logger.info('preparing subject parameter inputs')
         self.get_subject_params_inputs()
-
-        logger.info('computing subject parameters')
-        self.compute_subject_params()
 
         logger.info('simulating facts')
         self.simulate_facts()
