@@ -23,5 +23,5 @@ with open('use-cases/dev_use_case.yml', 'r') as file:
 
 generator = DataSimulator(config)
 generator.simulate()
-# generator.log_data_summary()
+generator.log_data_summary()
 # generator.push_to_snowflake()

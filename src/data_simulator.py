@@ -136,13 +136,19 @@ class DataSimulator:
         return pd.DataFrame(x)
 
     def generate_subjects(self):
-        self.subjects = pd.DataFrame({
+
+        simulated_dimensions = {
             dim_id: np.random.choice(
                 a=[var['id'] for var in dim_info['values']],
                 p=[var['weight'] for var in dim_info['values']],
                 size=self.sample_size
             ) for dim_id, dim_info in self.dimensions.items()
-        }).to_dict(orient='records')
+        }
+
+        self.subjects = pd.DataFrame({
+            self.entity_column: np.arange(self.sample_size),
+            **simulated_dimensions
+        })
 
     def _create_assignment_df_for_experiment(self, exp_id):
         exp_info = self.experiments[exp_id]
@@ -153,6 +159,7 @@ class DataSimulator:
         assigment_probabilities = assignment_weights / assignment_weights.sum()
 
         experiment_assignment = pd.DataFrame({
+            self.entity_column: np.arange(self.sample_size),
             'start_date': start_date,
             'end_date': end_date,
             'experiment': exp_id,
@@ -175,16 +182,7 @@ class DataSimulator:
             [self._create_assignment_df_for_experiment(exp_id) for exp_id in self.experiments.keys()]
         )
 
-    def get_subject_params_inputs(self):
-
-        self.daily_subject_params = pd.DataFrame(
-            list(product(
-                pd.date_range(start=self.config['start_date'], end=self.config['end_date']),
-                range(self.sample_size)
-            )),
-            columns=['date', self.entity_column]
-        )
-
+    def _get_active_experiments(self):
         active_experiments = self.daily_subject_params.merge(
             pd.DataFrame(self.assignments),
             on='user_id',
@@ -202,9 +200,39 @@ class DataSimulator:
             & (active_experiments['date'] \
                <= active_experiments['experiment_end_date'])
 
-        active_experiments = active_experiments[date_mask].groupby(
-            [self.entity_column, 'date']
-        ).apply(lambda x: dict(zip(x['experiment'], x['variant']))).reset_index(name='experiments')
+        # First, create a pivot table as before.
+        pivot_table = active_experiments[date_mask].pivot_table(
+            index=[self.entity_column, 'date'],
+            columns='experiment',
+            values='variant',
+            aggfunc='first'
+        )
+
+        # Convert the pivot table to a dictionary of dictionaries.
+        experiments_dict = pivot_table.to_dict(orient='index')
+
+        # Remove experiments with a NaN variant
+        for entity_date_pair, assignments in experiments_dict.items():
+            experiments_dict[entity_date_pair] = {experiment: variant for experiment, variant in assignments.items() if
+                                                  pd.notnull(variant)}
+
+        # Convert the outer dictionary's keys to a DataFrame and merge it with the inner dictionaries.
+        active_experiments = (
+            pd.DataFrame(list(experiments_dict.keys()), columns=[self.entity_column, 'date'])
+            .assign(experiments=[experiments_dict[key] for key, value in experiments_dict.items() if value])
+        )
+        return active_experiments
+
+    def get_subject_params_inputs(self):
+
+        self.daily_subject_params = pd.DataFrame(
+            list(product(
+                pd.date_range(start=self.config['start_date'], end=self.config['end_date']),
+                range(self.sample_size)
+            )),
+            columns=['date', self.entity_column]
+        )
+        active_experiments = self._get_active_experiments()
 
         self.daily_subject_params = self.daily_subject_params.merge(
             active_experiments,
@@ -212,9 +240,8 @@ class DataSimulator:
             how='left'
         )
 
-        self.daily_subject_params['experiments'] = self.daily_subject_params['experiments'].fillna({})
-
-        self.daily_subject_params = self.daily_subject_params.merge(pd.DataFrame(self.subjects))
+        self.daily_subject_params['experiments'].values[pd.isna(self.daily_subject_params['experiments'])] = {}
+        self.daily_subject_params = self.daily_subject_params.merge(self.subjects)
 
     def compute_subject_params(self):
 
