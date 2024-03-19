@@ -1,13 +1,10 @@
-import yaml
-import random
-import pandas as pd
-import yaml
-import numpy as np
-from itertools import chain, product
-from datetime import datetime, timedelta
 import logging
+from itertools import product
+
+import numpy as np
+import pandas as pd
+
 from snowflake_connector import SnowflakeConnector
-from time import time
 
 console_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 console_handler = logging.StreamHandler()
@@ -35,45 +32,14 @@ def evaluate_condition(df, conditions):
             for cond in condition['cond']:
                 if cond['type'] == 'experiment':
                     variant_column = f"{cond['experiment']}_assignment"
-                    included &= (df[variant_column] == cond['variant'])
+                    included &= (df[variant_column] == cond['variant']).values
 
                 if cond['type'] == 'dimension':
-                    included &= (df[cond['id']] == cond['value'])
+                    included &= (df[cond['id']] == cond['value']).values
 
-            parameters += condition['effect'] * included.values
+            parameters += condition['effect'] * included
 
     return parameters
-
-
-def simulate_fact(x, param_feild, entity_column):
-    fact_events = []
-    fact_params = x.get(param_feild)
-
-    fact_count = np.random.poisson(fact_params['frequency'], 1)
-
-    for i in range(fact_count[0]):
-
-        fact_event = {'date': x['date']}
-        fact_event[entity_column] = x[entity_column]
-
-        for fact in fact_params['values']:
-
-            if fact['model'] == 'normal':
-                sim_value = np.random.normal(fact['mu'], fact['sigma'], 1)[0]
-
-            elif fact['model'] == 'bernoulli':
-                sim_value = np.random.binomial(1, fact['rate'], 1)[0]
-                if sim_value == 0:
-                    sim_value = None
-
-            else:
-                raise Exception('Invalid fact model: ' + fact['model'])
-
-            fact_event[to_under_case(fact['name'])] = sim_value
-
-        fact_events.append(fact_event)
-
-    return fact_events
 
 
 class DataSimulator:
@@ -154,10 +120,8 @@ class DataSimulator:
         )
 
         date_mask = \
-            (active_experiments['date_assigned'] \
-             <= active_experiments['date']) \
-            & (active_experiments['date'] \
-               <= active_experiments['experiment_end_date'])
+            (active_experiments['date_assigned'] <= active_experiments['date']) \
+            & (active_experiments['date'] <= active_experiments['experiment_end_date'])
 
         # First, create a pivot table as before.
         active_experiments = active_experiments[date_mask].pivot_table(
@@ -190,10 +154,6 @@ class DataSimulator:
 
         self.daily_subject_params = self.daily_subject_params.merge(self.subjects)
 
-    def compute_subject_params(self):
-        for fact_source_id, fact_source_info in self.fact_sources.items():
-            self.daily_subject_params[fact_source_id] = self._get_daily_subject_params(fact_source_info)
-
     def simulate_fact(self, fact_source_info):
         frequencies = evaluate_condition(self.daily_subject_params, fact_source_info['frequency'])
         fact_counts = np.random.poisson(frequencies)
@@ -201,23 +161,26 @@ class DataSimulator:
         # Duplicates each subject param based on the fact counts
         subject_fact_params = self.daily_subject_params.loc[self.daily_subject_params.index.repeat(fact_counts)].copy()
 
-        fact_source_table = subject_fact_params[[self.entity_column, 'date']].copy()
+        fact_source_table = subject_fact_params[['date', self.entity_column]].copy()
 
         for fv in fact_source_info['fact_values']:
 
             if fv['model'] == 'normal':
                 mu = evaluate_condition(subject_fact_params, fv['params']['mu'])
                 sigma = evaluate_condition(subject_fact_params, fv['params']['sigma'])
-                fact_source_table[fv['name']] = np.random.normal(mu, sigma)
+                column_name = to_under_case(fv['name'])
+                fact_source_table[column_name] = np.random.normal(mu, sigma)
 
             elif fv['model'] == 'bernoulli':
                 rate = evaluate_condition(subject_fact_params, fv['params']['rate'])
-                fact_source_table[fv['name']] = np.random.binomial(1, rate)
+                column_name = to_under_case(fv['name'])
+                fact_source_table[column_name] = np.random.binomial(1, rate)
+                fact_source_table[column_name] = fact_source_table[column_name].replace(0, np.nan)
 
             else:
                 raise Exception('invalid fact value model: ' + fv['model'])
 
-        return fact_source_table
+        return fact_source_table.reset_index(drop=True)
 
     def simulate_facts(self):
         self.fact_source_tables = {}
