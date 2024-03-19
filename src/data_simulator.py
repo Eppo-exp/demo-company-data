@@ -123,7 +123,8 @@ class DataSimulator:
             (active_experiments['date_assigned'] <= active_experiments['date']) \
             & (active_experiments['date'] <= active_experiments['experiment_end_date'])
 
-        # First, create a pivot table as before.
+        # Pivot the table. Each row represents an entity/date combination.
+        # Each column is an experiment. If a user isn't in an experiment, fill in NaN.
         active_experiments = active_experiments[date_mask].pivot_table(
             index=[self.entity_column, 'date'],
             columns='experiment',
