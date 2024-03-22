@@ -124,7 +124,7 @@ class DataSimulator:
         self.experiments = self.config.get('experiments', {})
         self.dimensions = self.config.get('dimensions', {})
         self.fact_sources = self.config.get('fact_sources')
-        self.entity_column = self.entity_name.lower() + '_id'
+        self.entity_column = to_under_case(self.entity_name) + '_id'
 
     # utility function to get a merge-able data frame
     def experiment_dates(self):
@@ -195,7 +195,7 @@ class DataSimulator:
 
         active_experiments = self.daily_subject_params.merge(
             pd.DataFrame(self.assignments), 
-            on = 'user_id',
+            on = self.entity_column,
             suffixes=['', '_assigned']
         )
 
@@ -283,7 +283,7 @@ class DataSimulator:
 
         logger.info('pushing assignments table')
         snowflake_connection.push_table(
-            'assignments', 
+            self.entity_column + '_assignments', 
             pd.DataFrame(self.assignments)
         )
 

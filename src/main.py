@@ -18,7 +18,7 @@ os.environ["SNOWFLAKE_DATABASE"] = 'customer_db'
 os.environ["SNOWFLAKE_SCHEMA"] = 'demo_dev'
 
 
-with open('use-cases/dev_use_case.yml', 'r') as file:
+with open('use-cases/anonymous_users.yml', 'r') as file:
   config = yaml.safe_load(file)
 
 generator = DataSimulator(config)
