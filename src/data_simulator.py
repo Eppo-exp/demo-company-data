@@ -99,13 +99,14 @@ class DataSimulator:
                 pd.to_datetime(experiment_assignment['start_date']) +
                 pd.to_timedelta(date_offsets, unit='D')
         )
+
         return experiment_assignment
 
     # to do: create as data frame
     def generate_assignments(self):
         self.assignments = pd.concat(
             [self._create_assignment_df_for_experiment(exp_id) for exp_id in self.experiments.keys()]
-        )
+        ).merge(self.subjects, on = self.entity_column)
 
     def _get_active_experiments(self):
         active_experiments = self.daily_subject_params.merge(
