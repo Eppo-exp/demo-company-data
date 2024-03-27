@@ -1,11 +1,9 @@
-import yaml
-import random
-import pandas as pd
-import yaml
-import numpy as np
-from itertools import chain, product
-from datetime import datetime, timedelta
 import logging
+from itertools import product
+
+import numpy as np
+import pandas as pd
+
 from snowflake_connector import SnowflakeConnector
 
 console_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
@@ -13,107 +11,35 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(console_formatter)
 
 logger = logging.getLogger(__name__)
-logger.level=logging.INFO
-logger.addHandler(console_handler) 
+logger.level = logging.INFO
+logger.addHandler(console_handler)
 logger.propagate = False
 
 
 def to_under_case(x):
     return x.replace(' ', '_').lower()
 
-def evaluate_condition(x, conditions):
-    parameter = 0
+
+def evaluate_condition(df, conditions):
+    parameters = np.zeros(len(df))
     for condition in conditions:
-
         if 'cond' not in condition:
-            parameter += condition['effect']
-        
+            parameters += condition['effect']
+
         else:
-            included = True
+            # Initially assume everyone is included, exclude them if they fail to meet a condition
+            included = np.ones(len(df), dtype=bool)
             for cond in condition['cond']:
-
                 if cond['type'] == 'experiment':
+                    variant_column = f"{cond['experiment']}_assignment"
+                    included &= (df[variant_column] == cond['variant']).values
 
-                    if pd.isna(x['experiments']):
-                        included = False
-                    
-                    else:
-                        experiment_variant = x['experiments'].get(cond['experiment']) 
-                        if experiment_variant is not None:
-                            if experiment_variant != cond['variant']:
-                                included = False
-
-                    
                 if cond['type'] == 'dimension':
-                    if x.get(cond['id']) != cond['value']:
-                        included = False
+                    included &= (df[cond['id']] == cond['value']).values
 
-            if included:
-                parameter += condition['effect'] 
+            parameters += condition['effect'] * included
 
-    return parameter
-
-def evaluate_conditions(x, fact_source_info):
-
-    freq = evaluate_condition(x, fact_source_info['frequency'])
-
-    fv_params = {'frequency': freq, "values": []}
-
-    for fv in fact_source_info['fact_values']:
-
-        if fv['model'] == 'normal':
-            mu = evaluate_condition(x, fv['params']['mu'])
-            sigma = evaluate_condition(x, fv['params']['sigma'])
-            fv_params['values'].append({
-                'name': fv['name'],
-                'model': fv['model'],
-                'mu': mu,
-                'sigma': sigma
-            })
-
-        elif fv['model'] == 'bernoulli':
-            rate = evaluate_condition(x, fv['params']['rate'])
-            fv_params['values'].append({
-                'name': fv['name'],
-                'model': fv['model'],
-                'rate': rate
-            })
-
-        else:
-            raise Exception('invalid fact value model: ' + fv['model'])
-
-    return fv_params
-
-def simulate_fact(x, param_feild, entity_column):
-
-    fact_events = []
-    fact_params = x.get(param_feild)
-
-    fact_count = np.random.poisson(fact_params['frequency'], 1)
-
-    for i in range(fact_count[0]):
-
-        fact_event = {'date': x['date']}
-        fact_event[entity_column] = x[entity_column]
-
-        for fact in fact_params['values']:
-
-            if fact['model'] == 'normal':
-                sim_value = np.random.normal(fact['mu'], fact['sigma'], 1)[0]
-
-            elif fact['model'] == 'bernoulli':
-                sim_value = np.random.binomial(1, fact['rate'], 1)[0]
-                if sim_value == 0:
-                    sim_value = None
-
-            else:
-                raise Exception('Invalid fact model: ' + fact['model'])
-        
-            fact_event[to_under_case(fact['name'])] = sim_value
-
-        fact_events.append(fact_event)
-    
-    return fact_events
+    return parameters
 
 
 class DataSimulator:
@@ -124,7 +50,7 @@ class DataSimulator:
         self.experiments = self.config.get('experiments', {})
         self.dimensions = self.config.get('dimensions', {})
         self.fact_sources = self.config.get('fact_sources')
-        self.entity_column = self.entity_name.lower() + '_id'
+        self.entity_column = to_under_case(self.entity_name) + '_id'
 
     # utility function to get a merge-able data frame
     def experiment_dates(self):
@@ -134,68 +60,57 @@ class DataSimulator:
             x['experiment_end_date'].append(details['end_date'])
         return pd.DataFrame(x)
 
-    # to do: create as data frame
     def generate_subjects(self):
-        
-        self.subjects = []
 
-        for _ in range(self.sample_size):
-            subject = {}
-            subject[self.entity_column] = _
-            for dim_id, dim_info in self.dimensions.items():
-                subject[dim_id] = random.choices(
-                    population=[var['id'] for var in dim_info['values']],
-                    weights=[var['weight'] for var in dim_info['values']]
-                )[0]
-        
-            self.subjects.append(subject)
-    
+        simulated_dimensions = {
+            dim_id: np.random.choice(
+                a=[var['id'] for var in dim_info['values']],
+                p=[var['weight'] for var in dim_info['values']],
+                size=self.sample_size
+            ) for dim_id, dim_info in self.dimensions.items()
+        }
+
+        self.subjects = pd.DataFrame({
+            self.entity_column: np.arange(self.sample_size),
+            **simulated_dimensions
+        })
+
+    def _create_assignment_df_for_experiment(self, exp_id):
+        exp_info = self.experiments[exp_id]
+        start_date = exp_info['start_date']
+        end_date = exp_info['end_date']
+
+        assignment_weights = np.array([var.get('weight', 1) for var in exp_info['variants']])
+        assigment_probabilities = assignment_weights / assignment_weights.sum()
+
+        experiment_assignment = pd.DataFrame({
+            self.entity_column: np.arange(self.sample_size),
+            'start_date': start_date,
+            'end_date': end_date,
+            'experiment': exp_id,
+            'variant': np.random.choice(
+                a=[var['id'] for var in exp_info['variants']],
+                p=assigment_probabilities,
+                size=self.sample_size
+            )
+        })
+        date_offsets = np.random.randint(0, (end_date - start_date).days, size=self.sample_size)
+        experiment_assignment['date'] = (
+                pd.to_datetime(experiment_assignment['start_date']) +
+                pd.to_timedelta(date_offsets, unit='D')
+        )
+        return experiment_assignment
+
     # to do: create as data frame
     def generate_assignments(self):
-        
-        assignments_data = []
-        for _ in range(self.sample_size):
-
-            for exp_id, exp_info in self.experiments.items():
-                assignment = {}
-
-                start_date = exp_info['start_date']
-                end_date = exp_info['end_date']
-
-                assignment[self.entity_column] = _
-                
-                assignment['date'] = (
-                    start_date + 
-                    timedelta(days=random.randint(0, (end_date - start_date).days))
-                ).strftime('%Y-%m-%d')
-                
-                assignment['experiment'] = exp_id
-
-                assignment['variant'] = random.choices(
-                    population=[var['id'] for var in exp_info['variants']],
-                    weights=[var.get('weight', 1) for var in exp_info['variants']]
-                )[0]
-
-                # add dimensional data
-                assignment.update(self.subjects[_])
-
-                assignments_data.append(assignment)
-        
-        self.assignments = assignments_data
-
-    def get_subject_params_inputs(self):
-
-        self.daily_subject_params = pd.DataFrame(
-            list(product(
-                pd.date_range(start=self.config['start_date'], end=self.config['end_date']),
-                range(self.sample_size)
-            )),
-            columns = ['date', self.entity_column]
+        self.assignments = pd.concat(
+            [self._create_assignment_df_for_experiment(exp_id) for exp_id in self.experiments.keys()]
         )
 
+    def _get_active_experiments(self):
         active_experiments = self.daily_subject_params.merge(
             pd.DataFrame(self.assignments), 
-            on = 'user_id',
+            on = self.entity_column,
             suffixes=['', '_assigned']
         )
 
@@ -205,50 +120,73 @@ class DataSimulator:
         )
 
         date_mask = \
-            (active_experiments['date_assigned'] \
-                <= active_experiments['date']) \
-                    & (active_experiments['date'] \
-                        <= active_experiments['experiment_end_date'])
+            (active_experiments['date_assigned'] <= active_experiments['date']) \
+            & (active_experiments['date'] <= active_experiments['experiment_end_date'])
 
-        active_experiments = active_experiments[date_mask].groupby(
-            [self.entity_column, 'date']
-        ).apply(lambda x: dict(zip(x['experiment'], x['variant']))).reset_index(name='experiments')
+        # Pivot the table. Each row represents an entity/date combination.
+        # Each column is an experiment. If a user isn't in an experiment, fill in NaN.
+        active_experiments = active_experiments[date_mask].pivot_table(
+            index=[self.entity_column, 'date'],
+            columns='experiment',
+            values='variant',
+            aggfunc='first'
+        )
+
+        active_experiments.columns = [f"{column}_assignment" for column in active_experiments.columns]
+        active_experiments = active_experiments.reset_index()
+        return active_experiments
+
+    def get_subject_params_inputs(self):
+
+        self.daily_subject_params = pd.DataFrame(
+            list(product(
+                pd.date_range(start=self.config['start_date'], end=self.config['end_date']),
+                range(self.sample_size)
+            )),
+            columns=['date', self.entity_column]
+        )
+        active_experiments = self._get_active_experiments()
 
         self.daily_subject_params = self.daily_subject_params.merge(
             active_experiments,
-            on = [self.entity_column, 'date'],
-            how = 'left'
+            on=[self.entity_column, 'date'],
+            how='left'
         )
 
-        self.daily_subject_params['experiments'] = self.daily_subject_params['experiments'].fillna({})
+        self.daily_subject_params = self.daily_subject_params.merge(self.subjects)
 
-        self.daily_subject_params = self.daily_subject_params.merge(pd.DataFrame(self.subjects))
+    def simulate_fact(self, fact_source_info):
+        frequencies = evaluate_condition(self.daily_subject_params, fact_source_info['frequency'])
+        fact_counts = np.random.poisson(frequencies)
 
-    def compute_subject_params(self):
+        # Duplicates each subject param based on the fact counts
+        subject_fact_params = self.daily_subject_params.loc[self.daily_subject_params.index.repeat(fact_counts)].copy()
 
-        for fact_source_id, fact_source_info in self.fact_sources.items():
+        fact_source_table = subject_fact_params[['date', self.entity_column]].copy()
 
-            self.daily_subject_params[fact_source_id] = self.daily_subject_params.apply(
-                evaluate_conditions,
-                args=(fact_source_info, ),
-                axis=1
-            )
+        for fv in fact_source_info['fact_values']:
+
+            if fv['model'] == 'normal':
+                mu = evaluate_condition(subject_fact_params, fv['params']['mu'])
+                sigma = evaluate_condition(subject_fact_params, fv['params']['sigma'])
+                column_name = to_under_case(fv['name'])
+                fact_source_table[column_name] = np.random.normal(mu, sigma)
+
+            elif fv['model'] == 'bernoulli':
+                rate = evaluate_condition(subject_fact_params, fv['params']['rate'])
+                column_name = to_under_case(fv['name'])
+                fact_source_table[column_name] = np.random.binomial(1, rate)
+                fact_source_table[column_name] = fact_source_table[column_name].replace(0, np.nan)
+
+            else:
+                raise Exception('invalid fact value model: ' + fv['model'])
+
+        return fact_source_table.reset_index(drop=True)
 
     def simulate_facts(self):
-
-      self.fact_source_tables = {}
-
-      for fact_source_id, fact_source_info in self.config['fact_sources'].items():
-
-        fact_source_data = self.daily_subject_params.apply(
-            simulate_fact, 
-            args=(fact_source_id, self.entity_column), 
-            axis=1
-        )
-
-        self.fact_source_tables[fact_source_id] = pd.DataFrame(
-            list(chain(*fact_source_data))
-        )
+        self.fact_source_tables = {}
+        for fact_source_id, fact_source_info in self.config['fact_sources'].items():
+            self.fact_source_tables[fact_source_id] = self.simulate_fact(fact_source_info)
 
     def simulate(self):
 
@@ -261,12 +199,9 @@ class DataSimulator:
         logger.info('preparing subject parameter inputs')
         self.get_subject_params_inputs()
 
-        logger.info('computing subject parameters')
-        self.compute_subject_params()
-
         logger.info('simulating facts')
         self.simulate_facts()
-    
+
     def log_data_summary(self):
 
         logger.info('assignments')
@@ -283,14 +218,13 @@ class DataSimulator:
 
         logger.info('pushing assignments table')
         snowflake_connection.push_table(
-            'assignments', 
+            self.entity_column + '_assignments', 
             pd.DataFrame(self.assignments)
         )
 
         for fact_source_table_id, fact_source_data in self.fact_source_tables.items():
             logger.info('pushing ' + fact_source_table_id + ' table')
             snowflake_connection.push_table(
-                fact_source_table_id, 
+                fact_source_table_id,
                 fact_source_data
             )
-
