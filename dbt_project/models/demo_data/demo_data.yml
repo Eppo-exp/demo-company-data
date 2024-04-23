@@ -1,0 +1,48 @@
+
+version: 2
+
+models:
+  - name: revenue
+    description: "Central Revenue Model"
+    tags:
+      - eppo_fact_source
+    columns:
+      - name: revenue_id
+        description: "The primary key for this table"
+        tests:
+          - unique
+          - not_null
+      - name: anonymous_id
+        tags:
+          - eppo_entity:Anonymous User
+      - name: purchase_timestamp
+        description: "The time at which the revenue was created"
+        tests:
+          - not_null
+        tags:
+          - eppo_timestamp
+      - name: gross_revenue
+        description: "The gross revenue amount"
+        tags: 
+          - eppo_fact
+  
+  - name: events
+    description: "All Clickstream Events"
+    tags:
+      - eppo_fact_source
+    columns:
+      - name: anonymous_id
+        tags:
+          - eppo_entity:Anonymous User
+      - name: event_timestamp
+        description: "The timestamp at which the event occurred"
+        tags:
+          - eppo_timestamp
+      - name: event_name
+        description: "The name of the event"
+        tags: 
+          - eppo_property
+      - name: event_value
+        description: "The value of the event"
+        tags: 
+          - eppo_fact

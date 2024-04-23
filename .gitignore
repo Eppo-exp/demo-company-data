@@ -1,3 +1,5 @@
 venv/*
 .vscode/
 local/*
+test_api_key.txt
+.DS_Store
