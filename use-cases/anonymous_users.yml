@@ -136,7 +136,6 @@ fact_sources:
                   variant: v2.1
           sigma:
             - effect: 0.01
-
   
   add_to_cart:
     name: Add to Cart
@@ -154,7 +153,6 @@ fact_sources:
           rate: 
             - effect: 1
             
-
   checkout:
     name: Checkout Started
     frequency:
