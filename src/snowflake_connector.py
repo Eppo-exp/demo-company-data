@@ -1,9 +1,7 @@
 import snowflake.connector
-import os
-import pandas as pd
-from snowflake.snowpark.session import Session
 from snowflake.connector.pandas_tools import write_pandas
 
+from helpers import format_column_name
 
 snowflake_data_types = {
     'int64': 'INT',
@@ -12,63 +10,27 @@ snowflake_data_types = {
     'datetime64[ns]': 'TIMESTAMP'
 }
 
+
 class SnowflakeConnector:
-    def __init__(self):
-        # check for environment variables
-        snowflake_account = os.getenv("SNOWFLAKE_ACCOUNT")
-        snowflake_user = os.getenv("SNOWFLAKE_USER")
-        snowflake_password = os.getenv("SNOWFLAKE_PASSWORD")
-        snowflake_warehouse = os.getenv("SNOWFLAKE_WAREHOUSE")
-        snowflake_database = os.getenv("SNOWFLAKE_DATABASE")
-        snowflake_schema = os.getenv("SNOWFLAKE_SCHEMA")
-
-        # create a connection
+    def __init__(self, **connection_params):
         self.connection = snowflake.connector.connect(
-            user=snowflake_user,
-            password=snowflake_password,
-            account=snowflake_account,
-            warehouse=snowflake_warehouse,
-            database=snowflake_database,
-            schema=snowflake_schema
+            **connection_params
         )
-
-        # create a cursor
-        self.cursor = self.connection.cursor()
-
-        # store table destination information
-        self.snowflake_database = snowflake_database
-        self.snowflake_schema = snowflake_schema
 
     def push_table(self, table_name, table_data):
+        table_data.columns = [format_column_name(col) for col in table_data.columns]
 
-        connection_parameters = {
-            "account": os.getenv("SNOWFLAKE_ACCOUNT"),
-            "user": os.getenv("SNOWFLAKE_USER"),
-            "password": os.getenv("SNOWFLAKE_PASSWORD"),
-            "role": os.getenv("SNOWFLAKE_ROLE"),
-            "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
-            "database": os.getenv("SNOWFLAKE_DATABASE"),
-            "schema": os.getenv("SNOWFLAKE_SCHEMA")
-        }
-        
-        session = Session.builder.configs(connection_parameters).create()
-        
-        table_data['date'] = pd.to_datetime(table_data['date'])
-        
         table_data.columns = table_data.columns.str.upper()
 
-        session.write_pandas(
-            df = table_data, 
-            table_name = table_name.upper(), 
+        write_pandas(
+            self.connection,
+            df=table_data,
+            table_name=table_name.upper(),
             auto_create_table=True,
-            overwrite=True, 
+            use_logical_type=True,
+            overwrite=True,
         )
 
-        # Commit the changes (DO I NEED THIS?)
-        self.connection.commit()
-
     def close_connection(self):
-        
         # Close the cursor and connection when done
-        self.cursor.close()
         self.connection.close()
