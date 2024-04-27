@@ -1,5 +1,6 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+
 from src.helpers import draw_from_data_and_configs, duplicate_rows
 
 
@@ -52,7 +53,7 @@ class AssignmentSimulator:
 
     def simulate(self):
         return (self._assign_variants()
-                .pipe(add_dimension_columns, self.dimensions['entity_name'])
+                .pipe(add_dimension_columns, self.dimensions['entity'])
                 .pipe(add_assignment_date_column)
                 )
 

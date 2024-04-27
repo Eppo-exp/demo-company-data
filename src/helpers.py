@@ -1,7 +1,8 @@
 import numpy as np
-from src.effect_calculator import ConditionalEffectCalculator, RandomEffectCalculator
 import pandas as pd
+
 from src.distribution import DISTRIBUTIONS
+from src.effect_calculator import ConditionalEffectCalculator, RandomEffectCalculator
 
 
 def draw_from_data_and_configs(data, config):
@@ -10,7 +11,10 @@ def draw_from_data_and_configs(data, config):
     parameter_values = {}
 
     for parameter, parameter_config in config['parameters'].items():
-        parameter_values[parameter] = parameter_config['baseline_value'] * np.ones(len(data))
+        try:
+            parameter_values[parameter] = parameter_config['baseline_value'] * np.ones(len(data))
+        except:
+            pass
 
         if 'conditional_effects' in parameter_config:
             parameter_values[parameter] += ConditionalEffectCalculator(data,

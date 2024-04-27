@@ -6,7 +6,7 @@ assignments_table_name: clustered_assignments
 assignments:
   entity_name: Company
   subentity_name: User
-  sample_size: 1000
+  sample_size: 20000
 
   dimensions:
     entity:

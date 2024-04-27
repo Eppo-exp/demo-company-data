@@ -1,108 +1,123 @@
 sample_size: 20000
 start_date: 2023-09-01
 end_date: 2023-10-01
-entity_name: User
+type: standard
+assignments_table_name: dev_use_case_assignments
 
-dimensions:
+assignments:
+  entity_name: User
+  sample_size: 20000
+  dimensions:
+    entity:
+      user_persona:
+        name: User Persona
+        values:
+          - id: designer
+            name: Designer
+            weight: 0.5
+          - id: casual_user
+            name: Casual User
+            weight: 0.5
+      device_type:
+        name: Device Type
+        values:
+          - id: ios
+            name: iOS
+            weight: 0.25
+          - id: android
+            name: Android
+            weight: 0.25
+          - id: web
+            name: Web
+            weight: 0.5
 
-  user_persona:
-    name: User Persona
-    values:
-      - id: designer
-        name: Designer
-        weight: 0.5
-      - id: casual_user
-        name: Casual User
-        weight: 0.5
-
-  device_type:
-    name: Device Type
-    values:
-      - id: ios
-        name: iOS
-        weight: 0.25
-      - id: android
-        name: Android
-        weight: 0.25
-      - id: web
-        name: Web
-        weight: 0.5
-
-
-experiments:
-
+  experiments:
     new_onboarding:
-        name: New Onboarding
-        start_date: 2023-09-01
-        end_date: 2023-10-01
-        variants:
-          - id: control
-            name: Control
-            weight: 0.5
-          - id: test
-            name: Test
-            weight: 0.5
+      name: New Onboarding
+      start_date: 2023-09-01
+      end_date: 2023-10-01
+      variants:
+        - id: control
+          name: Control
+          weight: 0.5
+        - id: test
+          name: Test
+          weight: 0.5
 
     search_ranking_algorithm:
-        name: Search Ranking Algorithm
-        start_date: 2023-09-15
-        end_date: 2023-10-15
-        variants:
-          - id: control
-            name: Control
-            weight: 0.5
-          - id: xgboost
-            name: XGBoost
-            weight: 0.5
-          - id: neural_net
-            name: Neural Network
-            weight: 0.5
+      name: Search Ranking Algorithm
+      start_date: 2023-09-15
+      end_date: 2023-10-15
+      variants:
+        - id: control
+          name: Control
+          weight: 0.5
+        - id: xgboost
+          name: XGBoost
+          weight: 0.5
+        - id: neural_net
+          name: Neural Network
+          weight: 0.5
 
 fact_sources:
-
   revenue:
     name: Purchase
-    frequency:
-      - effect: 0.3
-      - effect: 0.018
-        cond:
-          - type: experiment
-            experiment: new_onboarding
-            variant: test
-      - effect: -0.006
-        cond:
-          - type: experiment
-            experiment: new_onboarding
-            variant: test
-          - type: dimension
-            id: user_persona
-            value: designer
+    frequency_distribution:
+      type: poisson
+      parameters:
+        rate:
+          baseline_value: 0.3
+          conditional_effects:
+            - effect: 0.018
+              conditions:
+                - column: experiment
+                  value: new_onboarding
+                - column: variant
+                  value: test
+            - effect: -0.006
+              conditions:
+                - column: experiment
+                  value: new_onboarding
+                - column: variant
+                  value: test
+                - column: user_persona
+                  value: designer
     fact_values:
       - name: Gross Revenue
-        model: normal
-        params:
-          mu: 
-            - effect: 20
-            - effect: -0.1
-              cond:
-                - type: experiment
-                  experiment: new_onboarding
-                  variant: test
-          sigma:
-            - effect: 10
+        distribution:
+          type: normal
+          parameters:
+            average:
+              baseline_value: 20
+              conditional_effects:
+                - effect: -0.1
+                  conditions:
+                    - column: experiment
+                      value: new_onboarding
+                    - column: variant
+                      value: test
+            standard_deviation:
+              baseline_value: 10
+
       - name: Voided
-        model: bernoulli
-        params:
-          rate:
-            - effect: 0.05
+        distribution:
+          type: bernoulli
+          parameters:
+            rate:
+              baseline_value: 0.05
   
   support_tickets:
     name: Support Tickets
-    frequency:
-      - effect: 0.3
+    frequency_distribution:
+      type: poisson
+      parameters:
+        rate:
+          baseline_value: 0.3
+
     fact_values:
       - name: Support Ticket
-        model: bernoulli
-        params:
-          rate: 
-            - effect: 1
+        distribution:
+          type: bernoulli
+          parameters:
+            rate:
+              baseline_value: 1

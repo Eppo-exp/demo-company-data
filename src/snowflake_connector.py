@@ -3,13 +3,6 @@ from snowflake.connector.pandas_tools import write_pandas
 
 from helpers import format_column_name
 
-snowflake_data_types = {
-    'int64': 'INT',
-    'float64': 'FLOAT',
-    'object': 'VARCHAR',
-    'datetime64[ns]': 'TIMESTAMP'
-}
-
 
 class SnowflakeConnector:
     def __init__(self, **connection_params):
