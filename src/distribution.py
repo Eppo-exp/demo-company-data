@@ -47,8 +47,26 @@ class BernoulliDistribution(BaseDistribution):
         return {'n': 1, 'p': self.parameters['rate']}
 
 
+class LogNormalDistribution(BaseDistribution):
+    _required_parameters = ('average', 'standard_deviation')
+    _draw_function = np.random.lognormal
+
+    def _get_distribution_parameters_from_config_inputs(self):
+        M2 = self.parameters['average'] ** 2
+        S2 = self.parameters['standard_deviation'] ** 2
+
+        # Calculate mu using the derived formula
+        mu = np.log(M2 / np.sqrt(S2 + M2))
+
+        # Calculate sigma using the derived formula
+        sigma = np.sqrt(np.log(1 + S2 / M2))
+
+        return {'mean': mu, 'sigma': sigma}
+
+
 DISTRIBUTIONS = {
     'poisson': PoissonDistribution,
     'normal': NormalDistribution,
-    'bernoulli': BernoulliDistribution
+    'bernoulli': BernoulliDistribution,
+    'lognormal': LogNormalDistribution
 }

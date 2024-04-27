@@ -106,7 +106,7 @@ fact_sources:
     fact_values:
       - name: Gross Revenue
         distribution:
-          type: normal
+          type: lognormal
           parameters:
             average:
               baseline_value: 20
