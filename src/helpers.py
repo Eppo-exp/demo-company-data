@@ -35,8 +35,8 @@ def duplicate_rows(df, frequency):
 
 
 def draw_datetime(start_dates, end_dates):
-    # Convert start and end dates to timestamps
-    start_timestamps = pd.to_datetime(start_dates).astype(int) // 10 ** 9
-    end_timestamps = pd.to_datetime(end_dates).astype(int) // 10 ** 9
+    ONE_BILLION = 10 ** 9
+    start_timestamps = pd.to_datetime(start_dates).astype(int) // ONE_BILLION
+    end_timestamps = pd.to_datetime(end_dates).astype(int) // ONE_BILLION
 
     return pd.to_datetime(np.random.randint(start_timestamps, end_timestamps), unit='s')
