@@ -1,0 +1,85 @@
+sample_size: 50000
+start_date: 2024-02-01
+end_date: 2024-05-01
+type: standard
+assignments_table_name: tyler_assignments
+
+assignments:
+  entity_name: User
+  sample_size: 50000
+  dimensions:
+    entity:
+      user_persona:
+        name: User Persona
+        values:
+          - id: designer
+            name: Designer
+            weight: 0.5
+          - id: casual_user
+            name: Casual User
+            weight: 0.5
+      device_type:
+        name: Device Type
+        values:
+          - id: ios
+            name: iOS
+            weight: 0.25
+          - id: android
+            name: Android
+            weight: 0.25
+          - id: web
+            name: Web
+            weight: 0.5
+
+  experiments:
+    new_landing_page:
+      name: New Landing Page
+      start_date: 2024-03-01
+      end_date: 2024-05-01
+      variants:
+        - id: control
+          name: Control
+          weight: 0.5
+        - id: test
+          name: Test
+          weight: 0.5
+
+fact_sources:
+  cuped_revenue:
+    name: Purchase
+    frequency_distribution:
+      type: constant
+      parameters:
+        value:
+          baseline_value: 1
+    fact_values:
+      - name: Revenue
+        distribution:
+          type: normal
+          parameters:
+            average:
+              baseline_value: 1
+              conditional_effects:
+                - effect: 0.12
+                  conditions:
+                    - column: experiment
+                      value: new_landing_page
+                    - column: variant
+                      value: test
+                - effect: 3
+                  conditions:
+                    - column: device_type
+                      value: android
+                - effect: 6
+                  conditions:
+                    - column: device_type
+                      value: web
+            standard_deviation:
+              baseline_value: 3
+
+      - name: Voided
+        distribution:
+          type: bernoulli
+          parameters:
+            rate:
+              baseline_value: 0.05

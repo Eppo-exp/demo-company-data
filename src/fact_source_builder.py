@@ -20,7 +20,7 @@ class FactSourceBuilder:
         exploded_assignments = duplicate_rows(self.assignment_df, fact_frequency)
         fact_values = {
             self.entity: exploded_assignments[self.entity],
-            'event_timestamp': draw_datetime(self.start_date, self.end_date, size=len(exploded_assignments)),
+            'event_timestamp': draw_datetime(exploded_assignments['date'], exploded_assignments['end_date']),
             **{
                 fv['name']: draw_from_data_and_configs(exploded_assignments, fv['distribution'])
                 for fv in self.fact_source_configs['fact_values']

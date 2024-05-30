@@ -3,11 +3,14 @@ import numpy as np
 
 class BaseDistribution:
     _required_parameters = None
-    _draw_function = None
 
     def __init__(self, parameters):
         self.parameters = parameters
         self._validate_parameters()
+
+    @staticmethod
+    def _draw_function(parameters):
+        raise NotImplementedError
 
     def _validate_parameters(self):
         is_valid = set(self.parameters.keys()) == set(self._required_parameters)
@@ -20,7 +23,7 @@ class BaseDistribution:
 
     def draw(self):
         parameters = self._get_distribution_parameters_from_config_inputs()
-        return self._draw_function(**parameters)
+        return self._draw_function(parameters)
 
 
 class PoissonDistribution(BaseDistribution):
@@ -31,9 +34,23 @@ class PoissonDistribution(BaseDistribution):
         return {'lam': self.parameters['rate']}
 
 
+class ConstantDistribution(BaseDistribution):
+    _required_parameters = ('value',)
+
+    @staticmethod
+    def _draw_function(parameters):
+        return parameters['value']
+
+    def _get_distribution_parameters_from_config_inputs(self):
+        return {'value': self.parameters['value']}
+
+
 class NormalDistribution(BaseDistribution):
     _required_parameters = ('average', 'standard_deviation')
-    _draw_function = np.random.normal
+
+    @staticmethod
+    def _draw_function(parameters):
+        return np.random.normal(**parameters)
 
     def _get_distribution_parameters_from_config_inputs(self):
         return {'loc': self.parameters['average'], 'scale': self.parameters['standard_deviation']}
@@ -41,7 +58,10 @@ class NormalDistribution(BaseDistribution):
 
 class BernoulliDistribution(BaseDistribution):
     _required_parameters = ('rate',)
-    _draw_function = np.random.binomial
+
+    @staticmethod
+    def _draw_function(parameters):
+        return np.random.binomial(**parameters)
 
     def _get_distribution_parameters_from_config_inputs(self):
         return {'n': 1, 'p': self.parameters['rate']}
@@ -49,7 +69,10 @@ class BernoulliDistribution(BaseDistribution):
 
 class LogNormalDistribution(BaseDistribution):
     _required_parameters = ('average', 'standard_deviation')
-    _draw_function = np.random.lognormal
+
+    @staticmethod
+    def _draw_function(parameters):
+        return np.random.lognormal(**parameters)
 
     def _get_distribution_parameters_from_config_inputs(self):
         M2 = self.parameters['average'] ** 2
@@ -68,5 +91,6 @@ DISTRIBUTIONS = {
     'poisson': PoissonDistribution,
     'normal': NormalDistribution,
     'bernoulli': BernoulliDistribution,
-    'lognormal': LogNormalDistribution
+    'lognormal': LogNormalDistribution,
+    'constant': ConstantDistribution
 }

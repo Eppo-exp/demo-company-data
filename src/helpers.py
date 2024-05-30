@@ -11,10 +11,7 @@ def draw_from_data_and_configs(data, config):
     parameter_values = {}
 
     for parameter, parameter_config in config['parameters'].items():
-        try:
-            parameter_values[parameter] = parameter_config['baseline_value'] * np.ones(len(data))
-        except:
-            pass
+        parameter_values[parameter] = parameter_config['baseline_value'] * np.ones(len(data))
 
         if 'conditional_effects' in parameter_config:
             parameter_values[parameter] += ConditionalEffectCalculator(data,
@@ -37,8 +34,9 @@ def duplicate_rows(df, frequency):
     return df.loc[df.index.repeat(frequency)].reset_index(drop=True)
 
 
-def draw_datetime(start_date, end_date, size=1):
-    start_u = int(pd.Timestamp(start_date).timestamp())
-    end_u = int(pd.Timestamp(end_date).timestamp())
-    random_datetimes = np.random.randint(start_u, end_u, size)
-    return pd.to_datetime(random_datetimes, unit='s')
+def draw_datetime(start_dates, end_dates):
+    # Convert start and end dates to timestamps
+    start_timestamps = pd.to_datetime(start_dates).astype(int) // 10 ** 9
+    end_timestamps = pd.to_datetime(end_dates).astype(int) // 10 ** 9
+
+    return pd.to_datetime(np.random.randint(start_timestamps, end_timestamps), unit='s')
