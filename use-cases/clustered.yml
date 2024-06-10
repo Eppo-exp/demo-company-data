@@ -1,14 +1,28 @@
-sample_size: 20000
 start_date: 2023-09-01
 end_date: 2023-10-01
-type: standard
-assignments_table_name: dev_use_case_assignments
+type: clustered
+assignments_table_name: clustered_assignments
 
 assignments:
-  entity_name: User
+  entity_name: Company
+  subentity_name: User
   sample_size: 20000
+
   dimensions:
     entity:
+      industry:
+        values:
+          - id: healthcare
+            name: Healthcare
+            weight: 0.25
+          - id: finance
+            name: Finance
+            weight: 0.5
+          - id: e_commerce
+            name: E-Commerce
+            weight: 0.25
+
+    subentity:
       user_persona:
         name: User Persona
         values:
@@ -18,6 +32,7 @@ assignments:
           - id: casual_user
             name: Casual User
             weight: 0.5
+
       device_type:
         name: Device Type
         values:
@@ -30,6 +45,12 @@ assignments:
           - id: web
             name: Web
             weight: 0.5
+
+  cluster_size_distribution:
+    type: poisson
+    parameters:
+      rate:
+        baseline_value: 10
 
   experiments:
     new_onboarding:
@@ -85,7 +106,7 @@ fact_sources:
     fact_values:
       - name: Gross Revenue
         distribution:
-          type: normal
+          type: lognormal
           parameters:
             average:
               baseline_value: 20
@@ -96,9 +117,16 @@ fact_sources:
                       value: new_onboarding
                     - column: variant
                       value: test
+              random_effects:
+                - type: normal
+                  column: Company
+                  parameters:
+                    average:
+                      baseline_value: 20
+                    standard_deviation:
+                      baseline_value: 10
             standard_deviation:
               baseline_value: 10
-
       - name: Voided
         distribution:
           type: bernoulli

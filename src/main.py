@@ -1,27 +1,19 @@
 import yaml
-import os
+
 from data_simulator import DataSimulator
+from snowflake_connector import SnowflakeConnector
 
 profile_file_path = 'local/profile.yml'
 
 with open(profile_file_path) as file:
     profile = yaml.safe_load(file)
 
-
-# set local env
-# TODO: if not in dev environment, assume these are already set
-os.environ["SNOWFLAKE_ACCOUNT"] = profile['account']
-os.environ["SNOWFLAKE_USER"] = profile['user']
-os.environ["SNOWFLAKE_PASSWORD"] = profile['password']
-os.environ["SNOWFLAKE_WAREHOUSE"]  = profile['warehouse']
-os.environ["SNOWFLAKE_DATABASE"] = 'customer_db'
-os.environ["SNOWFLAKE_SCHEMA"] = 'demo_dev'
-
-
-with open('use-cases/anonymous_users.yml', 'r') as file:
-  config = yaml.safe_load(file)
+with open('use-cases/showcasing_cuped.yml', 'r') as file:
+    config = yaml.safe_load(file)
 
 generator = DataSimulator(config)
 generator.simulate()
 generator.log_data_summary()
-generator.push_to_snowflake()
+
+snowflake_connector = SnowflakeConnector(**profile)
+generator.push_to_snowflake(snowflake_connector)

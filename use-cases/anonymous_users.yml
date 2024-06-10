@@ -1,40 +1,43 @@
 sample_size: 50000
 start_date: 2023-12-01
 end_date: 2024-03-01
-entity_name: anonymous_user
+assignments_table_name: anonymous_users_assignments
+type: standard
 
-dimensions:
+assignments:
+  entity_name: anonymous_user
+  dimensions:
+    entity:
+      session_referrer:
+        name: Session Referrer
+        values:
+          - id: organic
+            name: Organic
+            weight: 0.3
+          - id: paid_ad
+            name: Paid Ad
+            weight: 0.5
+          - id: social
+            name: Social
+            weight: 0.15
+          - id: other
+            name: Other
+            weight: 0.05
 
-  session_referrer:
-    name: Session Referrer
-    values:
-      - id: organic
-        name: Organic
-        weight: 0.3
-      - id: paid_ad
-        name: Paid Ad
-        weight: 0.5
-      - id: social
-        name: Social
-        weight: 0.15
-      - id: other
-        name: Other
-        weight: 0.05
-
-  user_type:
-    name: User Type
-    values:
-      - id: new
-        name: New
-        weight: 0.7
-      - id: returning
-        name: Returning
-        weight: 0.3
+      user_type:
+        name: User Type
+        values:
+          - id: new
+            name: New
+            weight: 0.7
+          - id: returning
+            name: Returning
+            weight: 0.3
 
 
-experiments:
+  experiments:
 
-  new_sorting_algorithm:
+    new_sorting_algorithm:
       name: Sorting Algorithm Upgrade to v2.1
       start_date: 2023-12-01
       end_date: 2024-02-01
@@ -46,7 +49,7 @@ experiments:
           name: Version 2.1
           weight: 0.5
 
-  pdp_redesign:
+    pdp_redesign:
       name: Product Detail Page Redesign
       start_date: 2023-01-01
       end_date: 2024-03-01
@@ -58,7 +61,7 @@ experiments:
           name: Test
           weight: 0.5
 
-  new_pricing:
+    new_pricing:
       name: Show Pricing on Product Page
       start_date: 2023-01-01
       end_date: 2024-02-01
@@ -73,95 +76,125 @@ experiments:
 fact_sources:
   revenue:
     name: Purchases
-    frequency:
-      - effect: 0.05
-      - effect: 0.003
-        cond:
-          - type: experiment
-            experiment: new_sorting_algorithm
-            variant: v2_1
-      - effect: 0.0025
-        cond:
-          - type: experiment
-            experiment: new_sorting_algorithm
-            variant: v2_1
-          - type: dimension
-            id: session_referrer
-            value: organic
+    frequency_distribution:
+      type: poisson
+      parameters:
+        rate:
+          baseline_value: 0.05
+          conditional_effects:
+            - effect: 0.003
+              conditions:
+                - column: experiment
+                  value: new_sorting_algorithm
+                - column: variant
+                  value: v2_1
+            - effect: 0.0025
+              conditions:
+                - column: experiment
+                  value: new_sorting_algorithm
+                - column: variant
+                  value: v2_1
+                - column: session_referrer
+                  value: organic
     fact_values:
       - name: Gross Revenue
-        model: normal
-        params:
-          mu: 
-            - effect: 20
-            - effect: -0.5
-              cond:
-                - type: experiment
-                  experiment: new_sorting_algorithm
-                  variant: v2_1
-          sigma:
-            - effect: 20
+        distribution:
+          type: normal
+          parameters:
+            average:
+              baseline_value: 20
+              conditional_effects:
+                - effect: -0.5
+                  conditions:
+                    - column: experiment
+                      value: new_sorting_algorithm
+                    - column: variant
+                      value: v2_1
+            standard_deviation:
+              baseline_value: 20
+
       - name: Basket Size
-        model: normal
-        params:
-          mu: 
-            - effect: 1.5
-            - effect: -0.5
-              cond:
-                - type: experiment
-                  experiment: new_sorting_algorithm
-                  variant: v2_1
-          sigma:
-            - effect: 1.5
+        distribution:
+          type: normal
+          parameters:
+            average:
+              baseline_value: 1.5
+              conditional_effects:
+                - effect: -0.5
+                  conditions:
+                    - column: experiment
+                      value: new_sorting_algorithm
+                    - column: variant
+                      value: v2_1
+            standard_deviation:
+              baseline_value: 1.5
+
       - name: Voided
-        model: bernoulli
-        params:
-          rate:
-            - effect: 0.05
+        distribution:
+          type: bernoulli
+          parameters:
+            rate:
+              baseline_value: 0.05
 
   searches:
     name: searches
-    frequency:
-      - effect: 0.2
+    frequency_distribution:
+      type: poisson
+      parameters:
+        rate:
+          baseline_value: 0.2
     fact_values:
       - name: Search load time
-        model: normal
-        params:
-          mu:
-            - effect: 0.01
-            - effect: 0.005
-              cond:
-                - type: experiment
-                  experiment: new_sorting_algorithm
-                  variant: v2.1
-          sigma:
-            - effect: 0.01
+        distribution:
+          type: normal
+          parameters:
+            average:
+              baseline_value: 0.01
+              conditional_effects:
+                - effect: 0.005
+                  conditions:
+                    - column: experiment
+                      value: new_sorting_algorithm
+                    - column: variant
+                      value: v2_1
+            standard_deviation:
+              baseline_value: 0.01
 
   
   add_to_cart:
     name: Add to Cart
-    frequency:
-      - effect: 0.2
-      - effect: 0.5
-        cond:
-          - type: experiment
-            experiment: new_sorting_algorithm
-            variant: v2.1
+    frequency_distribution:
+      type: poisson
+      parameters:
+        rate:
+          baseline_value: 0.2
+          conditional_effects:
+            - effect: 0.5
+              conditions:
+                - column: experiment
+                  value: new_sorting_algorithm
+                - column: variant
+                  value: v2_1
+
     fact_values:
       - name: Add to Cart
-        model: bernoulli
-        params:
-          rate: 
-            - effect: 1
-            
+        distribution:
+          type: bernoulli
+          parameters:
+            rate:
+              baseline_value: 1
 
   checkout:
     name: Checkout Started
-    frequency:
-      - effect: 0.1
+    frequency_distribution:
+      type: poisson
+      parameters:
+        rate:
+          baseline_value: 0.1
     fact_values:
       - name: Checkout Started
-        model: bernoulli
-        params:
-          rate: 
-            - effect: 1
+        distribution:
+          type: bernoulli
+          parameters:
+            rate:
+              baseline_value: 1
