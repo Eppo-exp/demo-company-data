@@ -28,7 +28,10 @@ class BaseDistribution:
 
 class PoissonDistribution(BaseDistribution):
     _required_parameters = ('rate',)
-    _draw_function = np.random.poisson
+
+    @staticmethod
+    def _draw_function(parameters):
+        return np.random.poisson(**parameters)
 
     def _get_distribution_parameters_from_config_inputs(self):
         return {'lam': self.parameters['rate']}

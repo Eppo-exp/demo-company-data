@@ -8,7 +8,7 @@ profile_file_path = 'local/profile.yml'
 with open(profile_file_path) as file:
     profile = yaml.safe_load(file)
 
-with open('use-cases/showcasing_cuped.yml', 'r') as file:
+with open('use-cases/new_demo_experiments.yml', 'r') as file:
     config = yaml.safe_load(file)
 
 generator = DataSimulator(config)

@@ -1,0 +1,481 @@
+sample_size: 50000
+start_date: '2024-05-01'
+end_date: '2024-06-01'
+type: standard
+assignments_table_name: ecommerce_assignments
+assignments:
+  entity_name: User
+  sample_size: 120000
+  dimensions:
+    entity:
+      device_type:
+        name: Device Type
+        values:
+          - id: desktop
+            name: Desktop
+            weight: 0.5
+          - id: mobile
+            name: Mobile
+            weight: 0.5
+      user_persona:
+        name: User Persona
+        values:
+          - id: designer
+            name: Designer
+            weight: 0.25
+          - id: casual_user
+            name: Casual User
+            weight: 0.25
+          - id: business
+            name: Business
+            weight: 0.25
+          - id: other
+            name: Other
+            weight: 0.25
+      country:
+        name: Country
+        values:
+          - id: usa
+            name: USA
+            weight: 0.4
+          - id: uk
+            name: UK
+            weight: 0.2
+          - id: germany
+            name: Germany
+            weight: 0.2
+          - id: canada
+            name: Canada
+            weight: 0.2
+
+  experiments:
+    homepage_layout_experiment:
+      name: Homepage Layout Experiment
+      start_date: '2024-05-01'
+      end_date: '2024-06-01'
+      variants:
+        - id: original
+          name: Original Layout
+          weight: 0.5
+        - id: new
+          name: New Layout
+          weight: 0.5
+
+    product_recommendations_experiment:
+      name: Product Recommendations Experiment
+      start_date: '2024-05-01'
+      end_date: '2024-06-01'
+      variants:
+        - id: standard
+          name: Standard Recommendations
+          weight: 0.5
+        - id: personalized
+          name: Personalized Recommendations
+          weight: 0.5
+
+    checkout_process_experiment:
+      name: Checkout Process Experiment
+      start_date: '2024-05-01'
+      end_date: '2024-06-01'
+      variants:
+        - id: standard
+          name: Standard Checkout
+          weight: 0.5
+        - id: simplified
+          name: Simplified Checkout
+          weight: 0.5
+
+    promotional_banners_experiment:
+      name: Promotional Banners Experiment
+      start_date: '2024-05-01'
+      end_date: '2024-06-01'
+      variants:
+        - id: static
+          name: Static Banners
+          weight: 0.5
+        - id: dynamic
+          name: Dynamic Banners
+          weight: 0.5
+
+    search_functionality_experiment:
+      name: Search Functionality Experiment
+      start_date: '2024-05-01'
+      end_date: '2024-06-01'
+      variants:
+        - id: basic
+          name: Basic Search
+          weight: 0.5
+        - id: advanced
+          name: Advanced Search
+          weight: 0.5
+
+    new_user_onboarding:
+      name: New User Onboarding
+      start_date: '2024-05-01'
+      end_date: '2024-06-01'
+      variants:
+        - id: control
+          name: Control Onboarding
+          weight: 0.5
+        - id: test
+          name: Test Onboarding
+          weight: 0.5
+
+    reports_generation_experiment:
+      name:
+        Reports Generation: Llama 3 vs. GPT 4o
+      start_date: '2024-05-01'
+      end_date: '2024-06-01'
+      variants:
+        - id: llama_3
+          name: Llama 3
+          weight: 0.5
+        - id: gpt_4o
+          name: GPT 4o
+          weight: 0.5
+
+    campaign_team_package_upsell:
+      name:
+        Campaign: Team Package Upsell
+      start_date: '2024-05-01'
+      end_date: '2024-06-01'
+      variants:
+        - id: email_1
+          name: Email 1
+          weight: 0.5
+        - id: email_2
+          name: Email 2
+          weight: 0.5
+
+    model_evaluation_experiment:
+      name: Model Evaluation Experiment
+      start_date: '2024-05-01'
+      end_date: '2024-06-01'
+      variants:
+        - id: model_a
+          name: Model A
+          weight: 0.5
+        - id: model_b
+          name: Model B
+          weight: 0.5
+
+fact_sources:
+  Sessions:
+    name: Sessions
+    frequency_distribution:
+      type: constant
+      parameters:
+        value:
+          baseline_value: 1
+    fact_values:
+      - name: session_duration
+        distribution:
+          type: normal
+          parameters:
+            average:
+              baseline_value: 10
+              conditional_effects:
+                - effect: 10
+                  conditions:
+                    - column: experiment
+                      value: homepage_layout_experiment
+                    - column: variant
+                      value: new
+                - effect: 10
+                  conditions:
+                    - column: experiment
+                      value: product_recommendations_experiment
+                    - column: variant
+                      value: personalized
+                - effect: 20
+                  conditions:
+                    - column: device_type
+                      value: desktop
+                - effect: 10
+                  conditions:
+                    - column: country
+                      value: usa
+            standard_deviation:
+              baseline_value: 20
+
+      - name: pages_viewed
+        distribution:
+          type: poisson
+          parameters:
+            rate:
+              baseline_value: 5
+              conditional_effects:
+                - effect: 0.5
+                  conditions:
+                    - column: experiment
+                      value: checkout_process_experiment
+                    - column: variant
+                      value: simplified
+                - effect: 0.3
+                  conditions:
+                    - column: experiment
+                      value: promotional_banners_experiment
+                    - column: variant
+                      value: dynamic
+                - effect: 1
+                  conditions:
+                    - column: device_type
+                      value: mobile
+                - effect: 0.5
+                  conditions:
+                    - column: country
+                      value: germany
+
+  Orders:
+    name: Orders
+    frequency_distribution:
+      type: bernoulli
+      parameters:
+        rate:
+          baseline_value: 0.05
+          conditional_effects:
+            - effect: 0.005
+              conditions:
+                - column: experiment
+                  value: checkout_process_experiment
+                - column: variant
+                  value: simplified
+            - effect: 0.003
+              conditions:
+                - column: experiment
+                  value: promotional_banners_experiment
+                - column: variant
+                  value: dynamic
+            - effect: 0.02
+              conditions:
+                - column: device_type
+                  value: mobile
+            - effect: -0.01
+              conditions:
+                - column: country
+                  value: germany
+    fact_values:
+      - name: amount
+        distribution:
+          type: lognormal
+          parameters:
+            average:
+              baseline_value: 3
+              conditional_effects:
+                - effect: 0.2
+                  conditions:
+                    - column: experiment
+                      value: homepage_layout_experiment
+                    - column: variant
+                      value: new
+                - effect: 0.3
+                  conditions:
+                    - column: experiment
+                      value: product_recommendations_experiment
+                    - column: variant
+                      value: personalized
+                - effect: 1
+                  conditions:
+                    - column: device_type
+                      value: mobile
+                - effect: 0.5
+                  conditions:
+                    - column: country
+                      value: canada
+            standard_deviation:
+              baseline_value: 0.5
+
+      - name: is_voided
+        distribution:
+          type: bernoulli
+          parameters:
+            rate:
+              baseline_value: 0.02
+              conditional_effects:
+                - effect: -0.005
+                  conditions:
+                    - column: experiment
+                      value: checkout_process_experiment
+                    - column: variant
+                      value: simplified
+                - effect: -0.01
+                  conditions:
+                    - column: device_type
+                      value: desktop
+                - effect: 0.01
+                  conditions:
+                    - column: country
+                      value: uk
+
+  Support_Tickets:
+    name: Support Tickets
+    frequency_distribution:
+      type: poisson
+      parameters:
+        rate:
+          baseline_value: 0.01
+          conditional_effects:
+            - effect: 0.02
+              conditions:
+                - column: experiment
+                  value: promotional_banners_experiment
+                - column: variant
+                  value: dynamic
+            - effect: 0.04
+              conditions:
+                - column: experiment
+                  value: search_functionality_experiment
+                - column: variant
+                  value: advanced
+            - effect: 0.02
+              conditions:
+                - column: device_type
+                  value: mobile
+            - effect: 0.01
+              conditions:
+                - column: country
+                  value: canada
+
+    fact_values:
+      - name: tickets_created
+        distribution:
+          type: constant
+          parameters:
+            value:
+              baseline_value: 1
+  New_Subscriptions:
+    name: New Subscriptions
+    frequency_distribution:
+      type: bernoulli
+      parameters:
+        rate:
+          baseline_value: 0.2
+          conditional_effects:
+            - effect: .1
+              conditions:
+                - column: experiment
+                  value: model_evaluation_experiment
+                - column: variant
+                  value: model_b
+            - effect: 0.2
+              conditions:
+                - column: experiment
+                  value: new_user_onboarding
+                - column: variant
+                  value: test
+            - effect: -0.3
+              conditions:
+                - column: experiment
+                  value: new_user_onboarding
+                - column: variant
+                  value: test
+                - column: user_persona
+                  value: designer
+            - effect: 0.4
+              conditions:
+                - column: device_type
+                  value: desktop
+            - effect: -0.1
+              conditions:
+                - column: country
+                  value: uk
+            - effect: 0.2
+              conditions:
+                - column: country
+                  value: usa
+    fact_values:
+      - name: subscription_type
+        distribution:
+          type: constant
+          parameters:
+            value:
+              baseline_value: 1
+
+  premium_upgrades:
+    name: Premium Upgrades
+    frequency_distribution:
+      type: poisson
+      parameters:
+        rate:
+          baseline_value: 0.1
+          conditional_effects:
+            - effect: .005
+              conditions:
+                - column: experiment
+                  value: model_evaluation_experiment
+                - column: variant
+                  value: model_b
+            - effect: .007
+              conditions:
+                - column: experiment
+                  value: new_user_onboarding
+                - column: variant
+                  value: test
+            - effect: -0.007
+              conditions:
+                - column: experiment
+                  value: new_user_onboarding
+                - column: variant
+                  value: test
+                - column: user_persona
+                  value: designer
+            - effect: 0.2
+              conditions:
+                - column: device_type
+                  value: desktop
+            - effect: -0.05
+              conditions:
+                - column: country
+                  value: uk
+    fact_values:
+      - name: Premium Upgrade
+        distribution:
+          type: constant
+          parameters:
+            value:
+              baseline_value: 1
+
+  retention:
+    name: Retention
+    frequency_distribution:
+      type: poisson
+      parameters:
+        rate:
+          baseline_value: 0.3
+          conditional_effects:
+            - effect: .005
+              conditions:
+                - column: experiment
+                  value: model_evaluation_experiment
+                - column: variant
+                  value: model_b
+            - effect: .007
+              conditions:
+                - column: experiment
+                  value: new_user_onboarding
+                - column: variant
+                  value: test
+            - effect: -0.007
+              conditions:
+                - column: experiment
+                  value: new_user_onboarding
+                - column: variant
+                  value: test
+                - column: user_persona
+                  value: designer
+            - effect: 0.2
+              conditions:
+                - column: device_type
+                  value: desktop
+            - effect: -0.05
+              conditions:
+                - column: country
+                  value: uk
+    fact_values:
+      - name: retained
+        distribution:
+          type: constant
+          parameters:
+            value:
+              baseline_value: 1
+

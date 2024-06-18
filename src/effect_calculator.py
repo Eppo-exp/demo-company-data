@@ -25,8 +25,10 @@ class ConditionalEffectCalculator(EffectCalculator):
         included = np.ones(len(self.df), dtype=bool)
         for condition in conditional_effect['conditions']:
             included &= (self.df[condition['column']] == condition['value']).values
-
-        return conditional_effect['effect'] * included
+        try:
+            return conditional_effect['effect'] * included
+        except:
+            pass
 
 
 class RandomEffectCalculator(EffectCalculator):
