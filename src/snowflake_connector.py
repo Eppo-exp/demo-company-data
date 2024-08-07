@@ -1,7 +1,7 @@
 import snowflake.connector
 from snowflake.connector.pandas_tools import write_pandas
 
-from helpers import format_column_name
+from src.helpers import format_column_name
 
 
 class SnowflakeConnector:

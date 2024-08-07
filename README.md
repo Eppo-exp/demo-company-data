@@ -1,6 +1,18 @@
 # demo_company_data
 
-## Setting local environment:
+## About
+
+This project provides functionality for generating experimentation benchmark data for a variety of common use cases. Examples include general user level randomization and metrics, experiments that are randomized on an anonymous ID but measured using user ID-level metrics, and clustered experiments (e.g., experiments randomized by company, but measured using user-level metrics).
+
+Specific use cases are defined in yaml. You can find several examples in the `use-cases` directory.
+
+
+## Setup
+
+Currently, the project supports writing data to a Snowflake account. If you'd like to use a different warehouse, you'll simply need to implement a connector similar to the one defined in `src/snowflake_connector.py`.
+
+### Preparing local environment local
+
 Create a file `local/profile.yml`:
 
 ```
@@ -8,22 +20,23 @@ account: ...
 user: ...
 password: ...
 role: ...
-database: dbt_analytics
-warehouse: EPPO_TEST
+database: ...
+warehouse: ...
 schema: ...
 ```
 
+Next, install dependencies (ideally in a virtual environment):
 
-## Future work:
-1. connecting multiple entities (i.e., driver, ride, passenger)
-2. event stream data? (i.e., fact dimensions)
-3. holdouts
-4. assignment table name
-5. post to Eppo API to automatically create experiments
-6. delete experiments / keep app clean
-7. preview environment?
-8. create test and production environments, CI/CD, etc.
+```
+pip install -r requirements.txt
+```
 
-### API changes that could be nice
-1. delete flags via API
-2. connect feature flag to experiment
+### Simulate data and push to snowflake
+
+Run `main.py` and pass in the use case file you'd like to use:
+
+```
+python main.py use-cases/anonymous_users.yml
+```
+
+You should now see data in the Snowflake warehouse specified in `local/profile.yml`!
