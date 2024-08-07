@@ -33,9 +33,10 @@ pip install -r requirements.txt
 
 ### Simulate data and push to snowflake
 
-Update `main.py` to point at the use case file of interest and run the script:
+Run `main.py` and pass in the use case file you'd like to use:
 
 ```
-python3 main.py <path to use case file>
+python main.py use-cases/anonymous_users.yml
 ```
 
+You should now see data in the Snowflake warehouse specified in `local/profile.yml`!
