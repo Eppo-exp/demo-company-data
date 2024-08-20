@@ -84,5 +84,4 @@ class ClusteredAssignmentSimulator(AssignmentSimulator):
                 .pipe(self.split_into_subentities)
                 .pipe(add_dimension_columns, self.dimensions['subentity'])
                 .pipe(add_assignment_date_column)
-                .drop(['start_date', 'end_date'], axis=1)
                 )
