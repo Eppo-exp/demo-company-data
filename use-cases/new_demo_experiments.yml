@@ -159,6 +159,548 @@ assignments:
           name: Model B
           weight: 0.5
 
+    signup_form_experiment:
+      name: Signup Form Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: short
+          name: Short Form
+          weight: 0.5
+        - id: long
+          name: Long Form
+          weight: 0.5
+
+    pricing_page_experiment:
+      name: Pricing Page Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: standard
+          name: Standard Pricing Page
+          weight: 0.5
+        - id: tiered
+          name: Tiered Pricing Page
+          weight: 0.5
+
+    email_subject_experiment:
+      name: Email Subject Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: short_subject
+          name: Short Subject Line
+          weight: 0.5
+        - id: long_subject
+          name: Long Subject Line
+          weight: 0.5
+
+    user_profile_experiment:
+      name: User Profile Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: minimal
+          name: Minimal Profile
+          weight: 0.5
+        - id: detailed
+          name: Detailed Profile
+          weight: 0.5
+
+    mobile_menu_experiment:
+      name: Mobile Menu Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: hamburger
+          name: Hamburger Menu
+          weight: 0.5
+        - id: bottom_nav
+          name: Bottom Navigation
+          weight: 0.5
+
+    footer_design_experiment:
+      name: Footer Design Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: compact
+          name: Compact Footer
+          weight: 0.5
+        - id: extended
+          name: Extended Footer
+          weight: 0.5
+
+    cart_icon_experiment:
+      name: Cart Icon Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: icon_only
+          name: Icon Only
+          weight: 0.5
+        - id: icon_with_text
+          name: Icon with Text
+          weight: 0.5
+
+    search_autocomplete_experiment:
+      name: Search Autocomplete Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: standard_autocomplete
+          name: Standard Autocomplete
+          weight: 0.5
+        - id: enhanced_autocomplete
+          name: Enhanced Autocomplete
+          weight: 0.5
+
+    faq_layout_experiment:
+      name: FAQ Layout Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: list_layout
+          name: List Layout
+          weight: 0.5
+        - id: accordion_layout
+          name: Accordion Layout
+          weight: 0.5
+
+    chatbot_experiment:
+      name: Chatbot Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: basic_chatbot
+          name: Basic Chatbot
+          weight: 0.5
+        - id: advanced_chatbot
+          name: Advanced Chatbot
+          weight: 0.5
+
+    product_filter_experiment:
+      name: Product Filter Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: standard_filter
+          name: Standard Filter
+          weight: 0.5
+        - id: advanced_filter
+          name: Advanced Filter
+          weight: 0.5
+
+    loyalty_program_experiment:
+      name: Loyalty Program Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: points_system
+          name: Points System
+          weight: 0.5
+        - id: tier_system
+          name: Tier System
+          weight: 0.5
+
+    push_notification_experiment:
+      name: Push Notification Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: immediate
+          name: Immediate Notifications
+          weight: 0.5
+        - id: scheduled
+          name: Scheduled Notifications
+          weight: 0.5
+
+    video_ad_experiment:
+      name: Video Ad Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: short_ad
+          name: Short Video Ad
+          weight: 0.5
+        - id: long_ad
+          name: Long Video Ad
+          weight: 0.5
+
+    survey_prompt_experiment:
+      name: Survey Prompt Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: popup
+          name: Popup Survey Prompt
+          weight: 0.5
+        - id: in_page
+          name: In-Page Survey Prompt
+          weight: 0.5
+
+    customer_support_experiment:
+      name: Customer Support Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: live_chat
+          name: Live Chat Support
+          weight: 0.5
+        - id: ticket_system
+          name: Ticket System Support
+          weight: 0.5
+
+    referral_program_experiment:
+      name: Referral Program Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: discount_based
+          name: Discount-Based Referral
+          weight: 0.5
+        - id: points_based
+          name: Points-Based Referral
+          weight: 0.5
+
+    blog_layout_experiment:
+      name: Blog Layout Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: grid_layout
+          name: Grid Layout
+          weight: 0.5
+        - id: list_layout
+          name: List Layout
+          weight: 0.5
+
+    login_method_experiment:
+      name: Login Method Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: password
+          name: Password Login
+          weight: 0.5
+        - id: otp
+          name: OTP Login
+          weight: 0.5
+
+    newsletter_signup_experiment:
+      name: Newsletter Signup Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: popup
+          name: Popup Signup Form
+          weight: 0.5
+        - id: inline
+          name: Inline Signup Form
+          weight: 0.5
+
+    headline_optimization_experiment:
+      name: Headline Optimization with Contextual Bandits
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: bandit_strategy_1
+          name: Epsilon-Greedy Strategy
+          weight: 0.5
+        - id: bandit_strategy_2
+          name: UCB1 Strategy
+          weight: 0.5
+
+    personalized_ads_experiment:
+      name: Personalized Ads with Contextual Bandits
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: contextual_bandits
+          name: Contextual Bandits Algorithm
+          weight: 0.5
+        - id: fixed_rule_based
+          name: Rule-Based Ads
+          weight: 0.5
+
+    article_recommendation_experiment:
+      name: Article Recommendation Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: popular_articles
+          name: Popular Articles
+          weight: 0.5
+        - id: personalized_recommendations
+          name: Personalized Recommendations
+          weight: 0.5
+
+    dynamic_pricing_experiment:
+      name: Dynamic Pricing Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: fixed_pricing
+          name: Fixed Pricing
+          weight: 0.5
+        - id: dynamic_pricing
+          name: Dynamic Pricing
+          weight: 0.5
+
+    push_notification_timing_experiment:
+      name: Push Notification Timing Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: immediate
+          name: Immediate Push Notifications
+          weight: 0.5
+        - id: delayed
+          name: Delayed Push Notifications
+          weight: 0.5
+
+    ad_frequency_experiment:
+      name: Ad Frequency Optimization Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: high_frequency
+          name: High Ad Frequency
+          weight: 0.5
+        - id: low_frequency
+          name: Low Ad Frequency
+          weight: 0.5
+
+    color_scheme_experiment:
+      name: Website Color Scheme Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: light_theme
+          name: Light Theme
+          weight: 0.5
+        - id: dark_theme
+          name: Dark Theme
+          weight: 0.5
+
+    video_length_experiment:
+      name: Video Length Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: short_videos
+          name: Short Videos (30 seconds)
+          weight: 0.5
+        - id: long_videos
+          name: Long Videos (2 minutes)
+          weight: 0.5
+
+    cta_button_color_experiment:
+      name: CTA Button Color Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: red_button
+          name: Red Button
+          weight: 0.5
+        - id: green_button
+          name: Green Button
+          weight: 0.5
+
+    product_list_order_experiment:
+      name: Product List Order Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: alphabetical_order
+          name: Alphabetical Order
+          weight: 0.5
+        - id: best_selling_order
+          name: Best-Selling Order
+          weight: 0.5
+
+    onboarding_tooltips_experiment:
+      name: Onboarding Tooltips Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: enabled_tooltips
+          name: Enabled Tooltips
+          weight: 0.5
+        - id: disabled_tooltips
+          name: Disabled Tooltips
+          weight: 0.5
+
+    form_field_validation_experiment:
+      name: Form Field Validation Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: client_side
+          name: Client-Side Validation
+          weight: 0.5
+        - id: server_side
+          name: Server-Side Validation
+          weight: 0.5
+
+    newsletter_frequency_experiment:
+      name: Newsletter Frequency Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: weekly_newsletter
+          name: Weekly Newsletter
+          weight: 0.5
+        - id: biweekly_newsletter
+          name: Biweekly Newsletter
+          weight: 0.5
+
+    image_quality_experiment:
+      name: Image Quality Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: low_quality
+          name: Low-Quality Images
+          weight: 0.5
+        - id: high_quality
+          name: High-Quality Images
+          weight: 0.5
+
+    chatbot_response_speed_experiment:
+      name: Chatbot Response Speed Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: fast_response
+          name: Fast Response Time
+          weight: 0.5
+        - id: slow_response
+          name: Slow Response Time
+          weight: 0.5
+
+    social_share_buttons_experiment:
+      name: Social Share Buttons Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: visible_buttons
+          name: Visible Share Buttons
+          weight: 0.5
+        - id: hidden_buttons
+          name: Hidden Share Buttons
+          weight: 0.5
+
+    personalized_email_subject_experiment:
+      name: Personalized Email Subject Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: personalized_subject
+          name: Personalized Subject Line
+          weight: 0.5
+        - id: generic_subject
+          name: Generic Subject Line
+          weight: 0.5
+
+    image_slider_experiment:
+      name: Image Slider Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: automatic_slider
+          name: Automatic Image Slider
+          weight: 0.5
+        - id: manual_slider
+          name: Manual Image Slider
+          weight: 0.5
+
+    checkout_progress_indicator_experiment:
+      name: Checkout Progress Indicator Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: visible_progress
+          name: Visible Progress Indicator
+          weight: 0.5
+        - id: hidden_progress
+          name: Hidden Progress Indicator
+          weight: 0.5
+
+    banner_text_experiment:
+      name: Banner Text Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: short_text
+          name: Short Banner Text
+          weight: 0.5
+        - id: long_text
+          name: Long Banner Text
+          weight: 0.5
+
+    coupon_code_placement_experiment:
+      name: Coupon Code Placement Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: checkout_page
+          name: Coupon on Checkout Page
+          weight: 0.5
+        - id: cart_page
+          name: Coupon on Cart Page
+          weight: 0.5
+
+    loading_spinner_design_experiment:
+      name: Loading Spinner Design Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: circular_spinner
+          name: Circular Spinner
+          weight: 0.5
+        - id: linear_spinner
+          name: Linear Spinner
+          weight: 0.5
+
+    modal_popup_timing_experiment:
+      name: Modal Popup Timing Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: immediate_popup
+          name: Immediate Modal Popup
+          weight: 0.5
+        - id: delayed_popup
+          name: Delayed Modal Popup
+          weight: 0.5
+
+    personalized_product_page_experiment:
+      name: Personalized Product Page Experiment
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: personalized_product_page
+          name: Personalized Product Page
+          weight: 0.5
+        - id: standard_product_page
+          name: Standard Product Page
+          weight: 0.5
+
+    contextual_bandit_cvr_experiment:
+      name: Contextual Bandits for CVR Optimization
+      start_date: '2024-08-01'
+      end_date: '2024-09-10'
+      variants:
+        - id: contextual_bandit
+          name: Contextual Bandit Algorithm
+          weight: 0.5
+        - id: control_group
+          name: Control Group (No Bandit)
+          weight: 0.5
+
+
+
 fact_sources:
   Sessions:
     name: Sessions
