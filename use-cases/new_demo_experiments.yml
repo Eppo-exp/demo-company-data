@@ -1,13 +1,24 @@
 sample_size: 50000
 start_date: '2024-05-01'
-end_date: '2024-06-01'
 type: standard
-assignments_table_name: ecommerce_assignments
 assignments:
-  entity_name: User
-  sample_size: 120000
   dimensions:
     entity:
+      country:
+        name: Country
+        values:
+          - id: usa
+            name: USA
+            weight: 0.4
+          - id: uk
+            name: UK
+            weight: 0.2
+          - id: germany
+            name: Germany
+            weight: 0.2
+          - id: canada
+            name: Canada
+            weight: 0.2
       device_type:
         name: Device Type
         values:
@@ -32,113 +43,57 @@ assignments:
           - id: other
             name: Other
             weight: 0.25
-      country:
-        name: Country
-        values:
-          - id: usa
-            name: USA
-            weight: 0.4
-          - id: uk
-            name: UK
-            weight: 0.2
-          - id: germany
-            name: Germany
-            weight: 0.2
-          - id: canada
-            name: Canada
-            weight: 0.2
-
+  entity_name: User
   experiments:
-    homepage_layout_experiment:
-      name: Homepage Layout Experiment
-      start_date: '2024-05-01'
-      end_date: '2024-06-01'
+    ad_frequency:
+      end_date: '2024-07-15'
+      name: Ad Frequency Optimization Experiment
+      start_date: '2024-06-15'
       variants:
-        - id: original
-          name: Original Layout
+        - id: high_frequency
+          name: high_frequency
           weight: 0.5
-        - id: new
-          name: New Layout
+        - id: low_frequency
+          name: low_frequency
           weight: 0.5
-
-    product_recommendations_experiment:
-      name: Product Recommendations Experiment
-      start_date: '2024-05-01'
-      end_date: '2024-06-01'
+    article_recommendation:
+      end_date: '2024-07-06'
+      name: Article Recommendation Experiment
+      start_date: '2024-06-06'
       variants:
-        - id: standard
-          name: Standard Recommendations
+        - id: popular_articles
+          name: popular_articles
           weight: 0.5
-        - id: personalized
-          name: Personalized Recommendations
+        - id: personalized_recommendations
+          name: personalized_recommendations
           weight: 0.5
-
-    checkout_process_experiment:
-      name: Checkout Process Experiment
-      start_date: '2024-05-01'
-      end_date: '2024-06-01'
+    banner_text:
+      end_date: '2024-08-26'
+      name: Banner Text Experiment
+      start_date: '2024-07-27'
       variants:
-        - id: standard
-          name: Standard Checkout
+        - id: short_text
+          name: short_text
           weight: 0.5
-        - id: simplified
-          name: Simplified Checkout
+        - id: long_text
+          name: long_text
           weight: 0.5
-
-    promotional_banners_experiment:
-      name: Promotional Banners Experiment
-      start_date: '2024-05-01'
-      end_date: '2024-06-01'
+    blog_layout:
+      end_date: '2024-06-21'
+      name: Blog Layout Experiment
+      start_date: '2024-05-22'
       variants:
-        - id: static
-          name: Static Banners
+        - id: grid_layout
+          name: grid_layout
           weight: 0.5
-        - id: dynamic
-          name: Dynamic Banners
+        - id: list_layout
+          name: list_layout
           weight: 0.5
-
-    search_functionality_experiment:
-      name: Search Functionality Experiment
-      start_date: '2024-05-01'
-      end_date: '2024-06-01'
-      variants:
-        - id: basic
-          name: Basic Search
-          weight: 0.5
-        - id: advanced
-          name: Advanced Search
-          weight: 0.5
-
-    new_user_onboarding:
-      name: New User Onboarding
-      start_date: '2024-05-01'
-      end_date: '2024-06-01'
-      variants:
-        - id: control
-          name: Control Onboarding
-          weight: 0.5
-        - id: test
-          name: Test Onboarding
-          weight: 0.5
-
-    reports_generation_experiment:
-      name:
-        Reports Generation: Llama 3 vs. GPT 4o
-      start_date: '2024-05-01'
-      end_date: '2024-06-01'
-      variants:
-        - id: llama_3
-          name: Llama 3
-          weight: 0.5
-        - id: gpt_4o
-          name: GPT 4o
-          weight: 0.5
-
     campaign_team_package_upsell:
+      end_date: '2024-06-01'
       name:
         Campaign: Team Package Upsell
       start_date: '2024-05-01'
-      end_date: '2024-06-01'
       variants:
         - id: email_1
           name: Email 1
@@ -146,11 +101,274 @@ assignments:
         - id: email_2
           name: Email 2
           weight: 0.5
-
-    model_evaluation_experiment:
+    cart_icon:
+      end_date: '2024-05-19'
+      name: Cart Icon Experiment
+      start_date: '2024-04-19'
+      variants:
+        - id: icon_only
+          name: icon_only
+          weight: 0.5
+        - id: icon_with_text
+          name: icon_with_text
+          weight: 0.5
+    chatbot:
+      end_date: '2024-05-28'
+      name: Chatbot Experiment
+      start_date: '2024-04-28'
+      variants:
+        - id: basic_chatbot
+          name: basic_chatbot
+          weight: 0.5
+        - id: advanced_chatbot
+          name: advanced_chatbot
+          weight: 0.5
+    chatbot_response_speed:
+      end_date: '2024-08-11'
+      name: Chatbot Response Speed Experiment
+      start_date: '2024-07-12'
+      variants:
+        - id: fast_response
+          name: fast_response
+          weight: 0.5
+        - id: slow_response
+          name: slow_response
+          weight: 0.5
+    checkout_process:
+      end_date: '2024-06-01'
+      name: Checkout Process Experiment
+      start_date: '2024-05-01'
+      variants:
+        - id: standard
+          name: Standard Checkout
+          weight: 0.5
+        - id: simplified
+          name: Simplified Checkout
+          weight: 0.5
+    checkout_progress_indicator:
+      end_date: '2024-08-23'
+      name: Checkout Progress Indicator Experiment
+      start_date: '2024-07-24'
+      variants:
+        - id: visible_progress
+          name: visible_progress
+          weight: 0.5
+        - id: hidden_progress
+          name: hidden_progress
+          weight: 0.5
+    color_scheme:
+      end_date: '2024-07-18'
+      name: Website Color Scheme Experiment
+      start_date: '2024-06-18'
+      variants:
+        - id: light_theme
+          name: light_theme
+          weight: 0.5
+        - id: dark_theme
+          name: dark_theme
+          weight: 0.5
+    contextual_bandit_cvr:
+      end_date: '2024-09-10'
+      name: Contextual Bandits for CVR Optimization
+      start_date: '2024-08-11'
+      variants:
+        - id: contextual_bandit
+          name: contextual_bandit
+          weight: 0.5
+        - id: control_group
+          name: control_group
+          weight: 0.5
+    coupon_code_placement:
+      end_date: '2024-08-29'
+      name: Coupon Code Placement Experiment
+      start_date: '2024-07-30'
+      variants:
+        - id: checkout_page
+          name: checkout_page
+          weight: 0.5
+        - id: cart_page
+          name: cart_page
+          weight: 0.5
+    cta_button_color:
+      end_date: '2024-07-24'
+      name: CTA Button Color Experiment
+      start_date: '2024-06-24'
+      variants:
+        - id: red_button
+          name: red_button
+          weight: 0.5
+        - id: green_button
+          name: green_button
+          weight: 0.5
+    customer_support:
+      end_date: '2024-06-15'
+      name: Customer Support Experiment
+      start_date: '2024-05-16'
+      variants:
+        - id: live_chat
+          name: live_chat
+          weight: 0.5
+        - id: ticket_system
+          name: ticket_system
+          weight: 0.5
+    dynamic_pricing:
+      end_date: '2024-07-09'
+      name: Dynamic Pricing Experiment
+      start_date: '2024-06-09'
+      variants:
+        - id: fixed_pricing
+          name: fixed_pricing
+          weight: 0.5
+        - id: dynamic_pricing
+          name: dynamic_pricing
+          weight: 0.5
+    email_subject:
+      end_date: '2024-05-07'
+      name: Email Subject Experiment
+      start_date: '2024-04-07'
+      variants:
+        - id: short_subject
+          name: short_subject
+          weight: 0.5
+        - id: long_subject
+          name: long_subject
+          weight: 0.5
+    faq_layout:
+      end_date: '2024-05-25'
+      name: FAQ Layout Experiment
+      start_date: '2024-04-25'
+      variants:
+        - id: list_layout
+          name: list_layout
+          weight: 0.5
+        - id: accordion_layout
+          name: accordion_layout
+          weight: 0.5
+    footer_design:
+      end_date: '2024-05-16'
+      name: Footer Design Experiment
+      start_date: '2024-04-16'
+      variants:
+        - id: compact
+          name: compact
+          weight: 0.5
+        - id: extended
+          name: extended
+          weight: 0.5
+    form_field_validation:
+      end_date: '2024-08-02'
+      name: Form Field Validation Experiment
+      start_date: '2024-07-03'
+      variants:
+        - id: client_side
+          name: client_side
+          weight: 0.5
+        - id: server_side
+          name: server_side
+          weight: 0.5
+    headline_optimization:
+      end_date: '2024-06-30'
+      name: Headline Optimization with Contextual Bandits
+      start_date: '2024-05-31'
+      variants:
+        - id: bandit_strategy_1
+          name: bandit_strategy_1
+          weight: 0.5
+        - id: bandit_strategy_2
+          name: bandit_strategy_2
+          weight: 0.5
+    homepage_layout:
+      end_date: '2024-06-01'
+      name: Homepage Layout Experiment
+      start_date: '2024-05-01'
+      variants:
+        - id: original
+          name: Original Layout
+          weight: 0.5
+        - id: new
+          name: New Layout
+          weight: 0.5
+    image_quality:
+      end_date: '2024-08-08'
+      name: Image Quality Experiment
+      start_date: '2024-07-09'
+      variants:
+        - id: low_quality
+          name: low_quality
+          weight: 0.5
+        - id: high_quality
+          name: high_quality
+          weight: 0.5
+    image_slider:
+      end_date: '2024-08-20'
+      name: Image Slider Experiment
+      start_date: '2024-07-21'
+      variants:
+        - id: automatic_slider
+          name: automatic_slider
+          weight: 0.5
+        - id: manual_slider
+          name: manual_slider
+          weight: 0.5
+    loading_spinner_design:
+      end_date: '2024-09-01'
+      name: Loading Spinner Design Experiment
+      start_date: '2024-08-02'
+      variants:
+        - id: circular_spinner
+          name: circular_spinner
+          weight: 0.5
+        - id: linear_spinner
+          name: linear_spinner
+          weight: 0.5
+    login_method:
+      end_date: '2024-06-24'
+      name: Login Method Experiment
+      start_date: '2024-05-25'
+      variants:
+        - id: password
+          name: password
+          weight: 0.5
+        - id: otp
+          name: otp
+          weight: 0.5
+    loyalty_program:
+      end_date: '2024-06-03'
+      name: Loyalty Program Experiment
+      start_date: '2024-05-04'
+      variants:
+        - id: points_system
+          name: points_system
+          weight: 0.5
+        - id: tier_system
+          name: tier_system
+          weight: 0.5
+    mobile_menu:
+      end_date: '2024-05-13'
+      name: Mobile Menu Experiment
+      start_date: '2024-04-13'
+      variants:
+        - id: hamburger
+          name: hamburger
+          weight: 0.5
+        - id: bottom_nav
+          name: bottom_nav
+          weight: 0.5
+    modal_popup_timing:
+      end_date: '2024-09-04'
+      name: Modal Popup Timing Experiment
+      start_date: '2024-08-05'
+      variants:
+        - id: immediate_popup
+          name: immediate_popup
+          weight: 0.5
+        - id: delayed_popup
+          name: delayed_popup
+          weight: 0.5
+    model_evaluation:
+      end_date: '2024-06-01'
       name: Model Evaluation Experiment
       start_date: '2024-05-01'
-      end_date: '2024-06-01'
       variants:
         - id: model_a
           name: Model A
@@ -158,866 +376,584 @@ assignments:
         - id: model_b
           name: Model B
           weight: 0.5
-
-    signup_form_experiment:
-      name: Signup Form Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
+    new_user_onboarding:
+      end_date: '2024-06-01'
+      name: New User Onboarding
+      start_date: '2024-05-01'
       variants:
-        - id: short
-          name: Short Form
+        - id: control
+          name: Control Onboarding
           weight: 0.5
-        - id: long
-          name: Long Form
+        - id: test
+          name: Test Onboarding
           weight: 0.5
-
-    pricing_page_experiment:
-      name: Pricing Page Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: standard
-          name: Standard Pricing Page
-          weight: 0.5
-        - id: tiered
-          name: Tiered Pricing Page
-          weight: 0.5
-
-    email_subject_experiment:
-      name: Email Subject Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: short_subject
-          name: Short Subject Line
-          weight: 0.5
-        - id: long_subject
-          name: Long Subject Line
-          weight: 0.5
-
-    user_profile_experiment:
-      name: User Profile Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: minimal
-          name: Minimal Profile
-          weight: 0.5
-        - id: detailed
-          name: Detailed Profile
-          weight: 0.5
-
-    mobile_menu_experiment:
-      name: Mobile Menu Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: hamburger
-          name: Hamburger Menu
-          weight: 0.5
-        - id: bottom_nav
-          name: Bottom Navigation
-          weight: 0.5
-
-    footer_design_experiment:
-      name: Footer Design Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: compact
-          name: Compact Footer
-          weight: 0.5
-        - id: extended
-          name: Extended Footer
-          weight: 0.5
-
-    cart_icon_experiment:
-      name: Cart Icon Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: icon_only
-          name: Icon Only
-          weight: 0.5
-        - id: icon_with_text
-          name: Icon with Text
-          weight: 0.5
-
-    search_autocomplete_experiment:
-      name: Search Autocomplete Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: standard_autocomplete
-          name: Standard Autocomplete
-          weight: 0.5
-        - id: enhanced_autocomplete
-          name: Enhanced Autocomplete
-          weight: 0.5
-
-    faq_layout_experiment:
-      name: FAQ Layout Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: list_layout
-          name: List Layout
-          weight: 0.5
-        - id: accordion_layout
-          name: Accordion Layout
-          weight: 0.5
-
-    chatbot_experiment:
-      name: Chatbot Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: basic_chatbot
-          name: Basic Chatbot
-          weight: 0.5
-        - id: advanced_chatbot
-          name: Advanced Chatbot
-          weight: 0.5
-
-    product_filter_experiment:
-      name: Product Filter Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: standard_filter
-          name: Standard Filter
-          weight: 0.5
-        - id: advanced_filter
-          name: Advanced Filter
-          weight: 0.5
-
-    loyalty_program_experiment:
-      name: Loyalty Program Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: points_system
-          name: Points System
-          weight: 0.5
-        - id: tier_system
-          name: Tier System
-          weight: 0.5
-
-    push_notification_experiment:
-      name: Push Notification Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: immediate
-          name: Immediate Notifications
-          weight: 0.5
-        - id: scheduled
-          name: Scheduled Notifications
-          weight: 0.5
-
-    video_ad_experiment:
-      name: Video Ad Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: short_ad
-          name: Short Video Ad
-          weight: 0.5
-        - id: long_ad
-          name: Long Video Ad
-          weight: 0.5
-
-    survey_prompt_experiment:
-      name: Survey Prompt Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: popup
-          name: Popup Survey Prompt
-          weight: 0.5
-        - id: in_page
-          name: In-Page Survey Prompt
-          weight: 0.5
-
-    customer_support_experiment:
-      name: Customer Support Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: live_chat
-          name: Live Chat Support
-          weight: 0.5
-        - id: ticket_system
-          name: Ticket System Support
-          weight: 0.5
-
-    referral_program_experiment:
-      name: Referral Program Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: discount_based
-          name: Discount-Based Referral
-          weight: 0.5
-        - id: points_based
-          name: Points-Based Referral
-          weight: 0.5
-
-    blog_layout_experiment:
-      name: Blog Layout Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: grid_layout
-          name: Grid Layout
-          weight: 0.5
-        - id: list_layout
-          name: List Layout
-          weight: 0.5
-
-    login_method_experiment:
-      name: Login Method Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: password
-          name: Password Login
-          weight: 0.5
-        - id: otp
-          name: OTP Login
-          weight: 0.5
-
-    newsletter_signup_experiment:
-      name: Newsletter Signup Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: popup
-          name: Popup Signup Form
-          weight: 0.5
-        - id: inline
-          name: Inline Signup Form
-          weight: 0.5
-
-    headline_optimization_experiment:
-      name: Headline Optimization with Contextual Bandits
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: bandit_strategy_1
-          name: Epsilon-Greedy Strategy
-          weight: 0.5
-        - id: bandit_strategy_2
-          name: UCB1 Strategy
-          weight: 0.5
-
-    personalized_ads_experiment:
-      name: Personalized Ads with Contextual Bandits
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: contextual_bandits
-          name: Contextual Bandits Algorithm
-          weight: 0.5
-        - id: fixed_rule_based
-          name: Rule-Based Ads
-          weight: 0.5
-
-    article_recommendation_experiment:
-      name: Article Recommendation Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: popular_articles
-          name: Popular Articles
-          weight: 0.5
-        - id: personalized_recommendations
-          name: Personalized Recommendations
-          weight: 0.5
-
-    dynamic_pricing_experiment:
-      name: Dynamic Pricing Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: fixed_pricing
-          name: Fixed Pricing
-          weight: 0.5
-        - id: dynamic_pricing
-          name: Dynamic Pricing
-          weight: 0.5
-
-    push_notification_timing_experiment:
-      name: Push Notification Timing Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: immediate
-          name: Immediate Push Notifications
-          weight: 0.5
-        - id: delayed
-          name: Delayed Push Notifications
-          weight: 0.5
-
-    ad_frequency_experiment:
-      name: Ad Frequency Optimization Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: high_frequency
-          name: High Ad Frequency
-          weight: 0.5
-        - id: low_frequency
-          name: Low Ad Frequency
-          weight: 0.5
-
-    color_scheme_experiment:
-      name: Website Color Scheme Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: light_theme
-          name: Light Theme
-          weight: 0.5
-        - id: dark_theme
-          name: Dark Theme
-          weight: 0.5
-
-    video_length_experiment:
-      name: Video Length Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: short_videos
-          name: Short Videos (30 seconds)
-          weight: 0.5
-        - id: long_videos
-          name: Long Videos (2 minutes)
-          weight: 0.5
-
-    cta_button_color_experiment:
-      name: CTA Button Color Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: red_button
-          name: Red Button
-          weight: 0.5
-        - id: green_button
-          name: Green Button
-          weight: 0.5
-
-    product_list_order_experiment:
-      name: Product List Order Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: alphabetical_order
-          name: Alphabetical Order
-          weight: 0.5
-        - id: best_selling_order
-          name: Best-Selling Order
-          weight: 0.5
-
-    onboarding_tooltips_experiment:
-      name: Onboarding Tooltips Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: enabled_tooltips
-          name: Enabled Tooltips
-          weight: 0.5
-        - id: disabled_tooltips
-          name: Disabled Tooltips
-          weight: 0.5
-
-    form_field_validation_experiment:
-      name: Form Field Validation Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: client_side
-          name: Client-Side Validation
-          weight: 0.5
-        - id: server_side
-          name: Server-Side Validation
-          weight: 0.5
-
-    newsletter_frequency_experiment:
+    newsletter_frequency:
+      end_date: '2024-08-05'
       name: Newsletter Frequency Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
+      start_date: '2024-07-06'
       variants:
         - id: weekly_newsletter
-          name: Weekly Newsletter
+          name: weekly_newsletter
           weight: 0.5
         - id: biweekly_newsletter
-          name: Biweekly Newsletter
+          name: biweekly_newsletter
           weight: 0.5
-
-    image_quality_experiment:
-      name: Image Quality Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
+    newsletter_signup:
+      end_date: '2024-06-27'
+      name: Newsletter Signup Experiment
+      start_date: '2024-05-28'
       variants:
-        - id: low_quality
-          name: Low-Quality Images
+        - id: popup
+          name: popup
           weight: 0.5
-        - id: high_quality
-          name: High-Quality Images
+        - id: inline
+          name: inline
           weight: 0.5
-
-    chatbot_response_speed_experiment:
-      name: Chatbot Response Speed Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
+    onboarding_tooltips:
+      end_date: '2024-07-30'
+      name: Onboarding Tooltips Experiment
+      start_date: '2024-06-30'
       variants:
-        - id: fast_response
-          name: Fast Response Time
+        - id: enabled_tooltips
+          name: enabled_tooltips
           weight: 0.5
-        - id: slow_response
-          name: Slow Response Time
+        - id: disabled_tooltips
+          name: disabled_tooltips
           weight: 0.5
-
-    social_share_buttons_experiment:
-      name: Social Share Buttons Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
+    personalized_ads:
+      end_date: '2024-07-03'
+      name: Personalized Ads with Contextual Bandits
+      start_date: '2024-06-03'
       variants:
-        - id: visible_buttons
-          name: Visible Share Buttons
+        - id: contextual_bandits
+          name: contextual_bandits
           weight: 0.5
-        - id: hidden_buttons
-          name: Hidden Share Buttons
+        - id: fixed_rule_based
+          name: fixed_rule_based
           weight: 0.5
-
-    personalized_email_subject_experiment:
+    personalized_email_subject:
+      end_date: '2024-08-17'
       name: Personalized Email Subject Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
+      start_date: '2024-07-18'
       variants:
         - id: personalized_subject
-          name: Personalized Subject Line
+          name: personalized_subject
           weight: 0.5
         - id: generic_subject
-          name: Generic Subject Line
+          name: generic_subject
           weight: 0.5
-
-    image_slider_experiment:
-      name: Image Slider Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: automatic_slider
-          name: Automatic Image Slider
-          weight: 0.5
-        - id: manual_slider
-          name: Manual Image Slider
-          weight: 0.5
-
-    checkout_progress_indicator_experiment:
-      name: Checkout Progress Indicator Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: visible_progress
-          name: Visible Progress Indicator
-          weight: 0.5
-        - id: hidden_progress
-          name: Hidden Progress Indicator
-          weight: 0.5
-
-    banner_text_experiment:
-      name: Banner Text Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: short_text
-          name: Short Banner Text
-          weight: 0.5
-        - id: long_text
-          name: Long Banner Text
-          weight: 0.5
-
-    coupon_code_placement_experiment:
-      name: Coupon Code Placement Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: checkout_page
-          name: Coupon on Checkout Page
-          weight: 0.5
-        - id: cart_page
-          name: Coupon on Cart Page
-          weight: 0.5
-
-    loading_spinner_design_experiment:
-      name: Loading Spinner Design Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: circular_spinner
-          name: Circular Spinner
-          weight: 0.5
-        - id: linear_spinner
-          name: Linear Spinner
-          weight: 0.5
-
-    modal_popup_timing_experiment:
-      name: Modal Popup Timing Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
-      variants:
-        - id: immediate_popup
-          name: Immediate Modal Popup
-          weight: 0.5
-        - id: delayed_popup
-          name: Delayed Modal Popup
-          weight: 0.5
-
-    personalized_product_page_experiment:
+    personalized_product_page:
+      end_date: '2024-09-07'
       name: Personalized Product Page Experiment
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
+      start_date: '2024-08-08'
       variants:
         - id: personalized_product_page
-          name: Personalized Product Page
+          name: personalized_product_page
           weight: 0.5
         - id: standard_product_page
-          name: Standard Product Page
+          name: standard_product_page
           weight: 0.5
-
-    contextual_bandit_cvr_experiment:
-      name: Contextual Bandits for CVR Optimization
-      start_date: '2024-08-01'
-      end_date: '2024-09-10'
+    pricing_page:
+      end_date: '2024-05-04'
+      name: Pricing Page Experiment
+      start_date: '2024-04-04'
       variants:
-        - id: contextual_bandit
-          name: Contextual Bandit Algorithm
+        - id: standard
+          name: standard
           weight: 0.5
-        - id: control_group
-          name: Control Group (No Bandit)
+        - id: tiered
+          name: tiered
           weight: 0.5
-
-
-
+    product_filter:
+      end_date: '2024-05-31'
+      name: Product Filter Experiment
+      start_date: '2024-05-01'
+      variants:
+        - id: standard_filter
+          name: standard_filter
+          weight: 0.5
+        - id: advanced_filter
+          name: advanced_filter
+          weight: 0.5
+    product_list_order:
+      end_date: '2024-07-27'
+      name: Product List Order Experiment
+      start_date: '2024-06-27'
+      variants:
+        - id: alphabetical_order
+          name: alphabetical_order
+          weight: 0.5
+        - id: best_selling_order
+          name: best_selling_order
+          weight: 0.5
+    product_recommendations:
+      end_date: '2024-06-01'
+      name: Product Recommendations Experiment
+      start_date: '2024-05-01'
+      variants:
+        - id: standard
+          name: Standard Recommendations
+          weight: 0.5
+        - id: personalized
+          name: Personalized Recommendations
+          weight: 0.5
+    promotional_banners:
+      end_date: '2024-06-01'
+      name: Promotional Banners Experiment
+      start_date: '2024-05-01'
+      variants:
+        - id: static
+          name: Static Banners
+          weight: 0.5
+        - id: dynamic
+          name: Dynamic Banners
+          weight: 0.5
+    push_notification:
+      end_date: '2024-06-06'
+      name: Push Notification Experiment
+      start_date: '2024-05-07'
+      variants:
+        - id: immediate
+          name: immediate
+          weight: 0.5
+        - id: scheduled
+          name: scheduled
+          weight: 0.5
+    push_notification_timing:
+      end_date: '2024-07-12'
+      name: Push Notification Timing Experiment
+      start_date: '2024-06-12'
+      variants:
+        - id: immediate
+          name: immediate
+          weight: 0.5
+        - id: delayed
+          name: delayed
+          weight: 0.5
+    referral_program:
+      end_date: '2024-06-18'
+      name: Referral Program Experiment
+      start_date: '2024-05-19'
+      variants:
+        - id: discount_based
+          name: discount_based
+          weight: 0.5
+        - id: points_based
+          name: points_based
+          weight: 0.5
+    reports_generation:
+      end_date: '2024-06-01'
+      name:
+        Reports Generation: Llama 3 vs. GPT 4o
+      start_date: '2024-05-01'
+      variants:
+        - id: llama_3
+          name: Llama 3
+          weight: 0.5
+        - id: gpt_4o
+          name: GPT 4o
+          weight: 0.5
+    search_autocomplete:
+      end_date: '2024-05-22'
+      name: Search Autocomplete Experiment
+      start_date: '2024-04-22'
+      variants:
+        - id: standard_autocomplete
+          name: standard_autocomplete
+          weight: 0.5
+        - id: enhanced_autocomplete
+          name: enhanced_autocomplete
+          weight: 0.5
+    search_functionality:
+      end_date: '2024-06-01'
+      name: Search Functionality Experiment
+      start_date: '2024-05-01'
+      variants:
+        - id: basic
+          name: Basic Search
+          weight: 0.5
+        - id: advanced
+          name: Advanced Search
+          weight: 0.5
+    signup_form:
+      end_date: '2024-05-01'
+      name: Signup Form Experiment
+      start_date: '2024-04-01'
+      variants:
+        - id: short
+          name: short
+          weight: 0.5
+        - id: long
+          name: long
+          weight: 0.5
+    social_share_buttons:
+      end_date: '2024-08-14'
+      name: Social Share Buttons Experiment
+      start_date: '2024-07-15'
+      variants:
+        - id: visible_buttons
+          name: visible_buttons
+          weight: 0.5
+        - id: hidden_buttons
+          name: hidden_buttons
+          weight: 0.5
+    survey_prompt:
+      end_date: '2024-06-12'
+      name: Survey Prompt Experiment
+      start_date: '2024-05-13'
+      variants:
+        - id: popup
+          name: popup
+          weight: 0.5
+        - id: in_page
+          name: in_page
+          weight: 0.5
+    user_profile:
+      end_date: '2024-05-10'
+      name: User Profile Experiment
+      start_date: '2024-04-10'
+      variants:
+        - id: minimal
+          name: minimal
+          weight: 0.5
+        - id: detailed
+          name: detailed
+          weight: 0.5
+    video_ad:
+      end_date: '2024-06-09'
+      name: Video Ad Experiment
+      start_date: '2024-05-10'
+      variants:
+        - id: short_ad
+          name: short_ad
+          weight: 0.5
+        - id: long_ad
+          name: long_ad
+          weight: 0.5
+    video_length:
+      end_date: '2024-07-21'
+      name: Video Length Experiment
+      start_date: '2024-06-21'
+      variants:
+        - id: short_videos
+          name: short_videos
+          weight: 0.5
+        - id: long_videos
+          name: long_videos
+          weight: 0.5
+  sample_size: 120000
+assignments_table_name: ecommerce_assignments
+end_date: '2024-06-01'
 fact_sources:
-  Sessions:
-    name: Sessions
-    frequency_distribution:
-      type: constant
-      parameters:
-        value:
-          baseline_value: 1
+  New_Subscriptions:
     fact_values:
-      - name: session_duration
-        distribution:
-          type: normal
-          parameters:
-            average:
-              baseline_value: 10
-              conditional_effects:
-                - effect: 10
-                  conditions:
-                    - column: experiment
-                      value: homepage_layout_experiment
-                    - column: variant
-                      value: new
-                - effect: 10
-                  conditions:
-                    - column: experiment
-                      value: product_recommendations_experiment
-                    - column: variant
-                      value: personalized
-                - effect: 20
-                  conditions:
-                    - column: device_type
-                      value: desktop
-                - effect: 10
-                  conditions:
-                    - column: country
-                      value: usa
-            standard_deviation:
-              baseline_value: 20
-
-      - name: pages_viewed
-        distribution:
-          type: poisson
-          parameters:
-            rate:
-              baseline_value: 5
-              conditional_effects:
-                - effect: 0.5
-                  conditions:
-                    - column: experiment
-                      value: checkout_process_experiment
-                    - column: variant
-                      value: simplified
-                - effect: 0.3
-                  conditions:
-                    - column: experiment
-                      value: promotional_banners_experiment
-                    - column: variant
-                      value: dynamic
-                - effect: 1
-                  conditions:
-                    - column: device_type
-                      value: mobile
-                - effect: 0.5
-                  conditions:
-                    - column: country
-                      value: germany
-
-  Orders:
-    name: Orders
-    frequency_distribution:
-      type: bernoulli
-      parameters:
-        rate:
-          baseline_value: 0.05
-          conditional_effects:
-            - effect: 0.005
-              conditions:
-                - column: experiment
-                  value: checkout_process_experiment
-                - column: variant
-                  value: simplified
-            - effect: 0.003
-              conditions:
-                - column: experiment
-                  value: promotional_banners_experiment
-                - column: variant
-                  value: dynamic
-            - effect: 0.02
-              conditions:
-                - column: device_type
-                  value: mobile
-            - effect: -0.01
-              conditions:
-                - column: country
-                  value: germany
-    fact_values:
-      - name: amount
-        distribution:
-          type: lognormal
-          parameters:
-            average:
-              baseline_value: 3
-              conditional_effects:
-                - effect: 0.2
-                  conditions:
-                    - column: experiment
-                      value: homepage_layout_experiment
-                    - column: variant
-                      value: new
-                - effect: 0.3
-                  conditions:
-                    - column: experiment
-                      value: product_recommendations_experiment
-                    - column: variant
-                      value: personalized
-                - effect: 1
-                  conditions:
-                    - column: device_type
-                      value: mobile
-                - effect: 0.5
-                  conditions:
-                    - column: country
-                      value: canada
-            standard_deviation:
-              baseline_value: 0.5
-
-      - name: is_voided
-        distribution:
-          type: bernoulli
-          parameters:
-            rate:
-              baseline_value: 0.02
-              conditional_effects:
-                - effect: -0.005
-                  conditions:
-                    - column: experiment
-                      value: checkout_process_experiment
-                    - column: variant
-                      value: simplified
-                - effect: -0.01
-                  conditions:
-                    - column: device_type
-                      value: desktop
-                - effect: 0.01
-                  conditions:
-                    - column: country
-                      value: uk
-
-  Support_Tickets:
-    name: Support Tickets
-    frequency_distribution:
-      type: poisson
-      parameters:
-        rate:
-          baseline_value: 0.01
-          conditional_effects:
-            - effect: 0.02
-              conditions:
-                - column: experiment
-                  value: promotional_banners_experiment
-                - column: variant
-                  value: dynamic
-            - effect: 0.04
-              conditions:
-                - column: experiment
-                  value: search_functionality_experiment
-                - column: variant
-                  value: advanced
-            - effect: 0.02
-              conditions:
-                - column: device_type
-                  value: mobile
-            - effect: 0.01
-              conditions:
-                - column: country
-                  value: canada
-
-    fact_values:
-      - name: tickets_created
-        distribution:
-          type: constant
+      - distribution:
           parameters:
             value:
               baseline_value: 1
-  New_Subscriptions:
-    name: New Subscriptions
+          type: constant
+        name: subscription_type
     frequency_distribution:
-      type: bernoulli
       parameters:
         rate:
           baseline_value: 0.2
           conditional_effects:
-            - effect: .1
-              conditions:
+            - conditions:
                 - column: experiment
-                  value: model_evaluation_experiment
+                  value: model_evaluation
                 - column: variant
                   value: model_b
-            - effect: 0.2
-              conditions:
+              effect: 0.1
+            - conditions:
                 - column: experiment
                   value: new_user_onboarding
                 - column: variant
                   value: test
-            - effect: -0.3
-              conditions:
+              effect: 0.2
+            - conditions:
                 - column: experiment
                   value: new_user_onboarding
                 - column: variant
                   value: test
                 - column: user_persona
                   value: designer
-            - effect: 0.4
-              conditions:
+              effect: -0.3
+            - conditions:
                 - column: device_type
                   value: desktop
-            - effect: -0.1
-              conditions:
+              effect: 0.4
+            - conditions:
                 - column: country
                   value: uk
-            - effect: 0.2
-              conditions:
+              effect: -0.1
+            - conditions:
                 - column: country
                   value: usa
+              effect: 0.2
+      type: bernoulli
+    name: New Subscriptions
+  Orders:
     fact_values:
-      - name: subscription_type
-        distribution:
-          type: constant
+      - distribution:
+          parameters:
+            average:
+              baseline_value: 3
+              conditional_effects:
+                - conditions:
+                    - column: experiment
+                      value: homepage_layout
+                    - column: variant
+                      value: new
+                  effect: 0.2
+                - conditions:
+                    - column: experiment
+                      value: product_recommendations
+                    - column: variant
+                      value: personalized
+                  effect: 0.3
+                - conditions:
+                    - column: device_type
+                      value: mobile
+                  effect: 1
+                - conditions:
+                    - column: country
+                      value: canada
+                  effect: 0.5
+            standard_deviation:
+              baseline_value: 0.5
+          type: lognormal
+        name: amount
+      - distribution:
+          parameters:
+            rate:
+              baseline_value: 0.02
+              conditional_effects:
+                - conditions:
+                    - column: experiment
+                      value: checkout_process
+                    - column: variant
+                      value: simplified
+                  effect: -0.005
+                - conditions:
+                    - column: device_type
+                      value: desktop
+                  effect: -0.01
+                - conditions:
+                    - column: country
+                      value: uk
+                  effect: 0.01
+          type: bernoulli
+        name: is_voided
+    frequency_distribution:
+      parameters:
+        rate:
+          baseline_value: 0.05
+          conditional_effects:
+            - conditions:
+                - column: experiment
+                  value: checkout_process
+                - column: variant
+                  value: simplified
+              effect: 0.005
+            - conditions:
+                - column: experiment
+                  value: promotional_banners
+                - column: variant
+                  value: dynamic
+              effect: 0.003
+            - conditions:
+                - column: device_type
+                  value: mobile
+              effect: 0.02
+            - conditions:
+                - column: country
+                  value: germany
+              effect: -0.01
+      type: bernoulli
+    name: Orders
+  Sessions:
+    fact_values:
+      - distribution:
+          parameters:
+            average:
+              baseline_value: 10
+              conditional_effects:
+                - conditions:
+                    - column: experiment
+                      value: homepage_layout
+                    - column: variant
+                      value: new
+                  effect: 10
+                - conditions:
+                    - column: experiment
+                      value: product_recommendations
+                    - column: variant
+                      value: personalized
+                  effect: 10
+                - conditions:
+                    - column: device_type
+                      value: desktop
+                  effect: 20
+                - conditions:
+                    - column: country
+                      value: usa
+                  effect: 10
+            standard_deviation:
+              baseline_value: 20
+          type: normal
+        name: session_duration
+      - distribution:
+          parameters:
+            rate:
+              baseline_value: 5
+              conditional_effects:
+                - conditions:
+                    - column: experiment
+                      value: checkout_process
+                    - column: variant
+                      value: simplified
+                  effect: 0.5
+                - conditions:
+                    - column: experiment
+                      value: promotional_banners
+                    - column: variant
+                      value: dynamic
+                  effect: 0.3
+                - conditions:
+                    - column: device_type
+                      value: mobile
+                  effect: 1
+                - conditions:
+                    - column: country
+                      value: germany
+                  effect: 0.5
+          type: poisson
+        name: pages_viewed
+    frequency_distribution:
+      parameters:
+        value:
+          baseline_value: 1
+      type: constant
+    name: Sessions
+  Support_Tickets:
+    fact_values:
+      - distribution:
           parameters:
             value:
               baseline_value: 1
-
-  premium_upgrades:
-    name: Premium Upgrades
+          type: constant
+        name: tickets_created
     frequency_distribution:
+      parameters:
+        rate:
+          baseline_value: 0.01
+          conditional_effects:
+            - conditions:
+                - column: experiment
+                  value: promotional_banners
+                - column: variant
+                  value: dynamic
+              effect: 0.02
+            - conditions:
+                - column: experiment
+                  value: search_functionality
+                - column: variant
+                  value: advanced
+              effect: 0.04
+            - conditions:
+                - column: device_type
+                  value: mobile
+              effect: 0.02
+            - conditions:
+                - column: country
+                  value: canada
+              effect: 0.01
       type: poisson
+    name: Support Tickets
+  premium_upgrades:
+    fact_values:
+      - distribution:
+          parameters:
+            value:
+              baseline_value: 1
+          type: constant
+        name: Premium Upgrade
+    frequency_distribution:
       parameters:
         rate:
           baseline_value: 0.1
           conditional_effects:
-            - effect: .005
-              conditions:
+            - conditions:
                 - column: experiment
-                  value: model_evaluation_experiment
+                  value: model_evaluation
                 - column: variant
                   value: model_b
-            - effect: .007
-              conditions:
+              effect: 0.005
+            - conditions:
                 - column: experiment
                   value: new_user_onboarding
                 - column: variant
                   value: test
-            - effect: -0.007
-              conditions:
+              effect: 0.007
+            - conditions:
                 - column: experiment
                   value: new_user_onboarding
                 - column: variant
                   value: test
                 - column: user_persona
                   value: designer
-            - effect: 0.2
-              conditions:
+              effect: -0.007
+            - conditions:
                 - column: device_type
                   value: desktop
-            - effect: -0.05
-              conditions:
+              effect: 0.2
+            - conditions:
                 - column: country
                   value: uk
+              effect: -0.05
+      type: poisson
+    name: Premium Upgrades
+  retention:
     fact_values:
-      - name: Premium Upgrade
-        distribution:
-          type: constant
+      - distribution:
           parameters:
             value:
               baseline_value: 1
-
-  retention:
-    name: Retention
+          type: constant
+        name: retained
     frequency_distribution:
-      type: poisson
       parameters:
         rate:
           baseline_value: 0.3
           conditional_effects:
-            - effect: .005
-              conditions:
+            - conditions:
                 - column: experiment
-                  value: model_evaluation_experiment
+                  value: model_evaluation
                 - column: variant
                   value: model_b
-            - effect: .007
-              conditions:
+              effect: 0.005
+            - conditions:
                 - column: experiment
                   value: new_user_onboarding
                 - column: variant
                   value: test
-            - effect: -0.007
-              conditions:
+              effect: 0.007
+            - conditions:
                 - column: experiment
                   value: new_user_onboarding
                 - column: variant
                   value: test
                 - column: user_persona
                   value: designer
-            - effect: 0.2
-              conditions:
+              effect: -0.007
+            - conditions:
                 - column: device_type
                   value: desktop
-            - effect: -0.05
-              conditions:
+              effect: 0.2
+            - conditions:
                 - column: country
                   value: uk
-    fact_values:
-      - name: retained
-        distribution:
-          type: constant
-          parameters:
-            value:
-              baseline_value: 1
+              effect: -0.05
+      type: poisson
+    name: Retention
 
