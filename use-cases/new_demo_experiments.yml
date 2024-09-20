@@ -1,5 +1,7 @@
 sample_size: 50000
 start_date: '2024-05-01'
+end_date: '2024-06-01'
+assignments_table_name: ecommerce_assignments
 type: standard
 assignments:
   dimensions:
@@ -642,8 +644,6 @@ assignments:
           name: long_videos
           weight: 0.5
   sample_size: 120000
-assignments_table_name: ecommerce_assignments
-end_date: '2024-06-01'
 fact_sources:
   New_Subscriptions:
     fact_values:
