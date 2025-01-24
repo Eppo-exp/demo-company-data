@@ -13,10 +13,11 @@ class BaseDistribution:
         raise NotImplementedError
 
     def _validate_parameters(self):
-        is_valid = set(self.parameters.keys()) == set(self._required_parameters)
-        message = (f"Required parameters for {type(self).__name__} are {', '.join(self._required_parameters)}, "
-                   f"but got {', '.join(self.parameters.keys())}")
-        assert is_valid, message
+        if self._required_parameters is not None:
+            is_valid = set(self.parameters.keys()) == set(self._required_parameters)
+            message = (f"Required parameters for {type(self).__name__} are {', '.join(self._required_parameters)}, "
+                       f"but got {', '.join(self.parameters.keys())}")
+            assert is_valid, message
 
     def _get_distribution_parameters_from_config_inputs(self):
         raise NotImplementedError
@@ -90,10 +91,30 @@ class LogNormalDistribution(BaseDistribution):
         return {'mean': mu, 'sigma': sigma}
 
 
+class CategoricalDistribution(BaseDistribution):
+    @staticmethod
+    def _draw_function(parameters):
+        categories = list(parameters.keys())
+        probabilities = np.array([parameters[cat] for cat in categories])
+        
+        # Normalize probabilities across categories
+        normalized_probs = probabilities / np.sum(probabilities, axis=0)
+        
+        # Draw samples using normalized probabilities
+        n_samples = len(probabilities[0])
+        results = np.array([np.random.choice(categories, p=normalized_probs[:,i]) 
+                          for i in range(n_samples)])
+        return results
+
+    def _get_distribution_parameters_from_config_inputs(self):
+        return self.parameters
+
+
 DISTRIBUTIONS = {
     'poisson': PoissonDistribution,
     'normal': NormalDistribution,
     'bernoulli': BernoulliDistribution,
     'lognormal': LogNormalDistribution,
-    'constant': ConstantDistribution
+    'constant': ConstantDistribution,
+    'categorical': CategoricalDistribution
 }

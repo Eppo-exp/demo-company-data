@@ -744,6 +744,23 @@ fact_sources:
                   effect: 0.01
           type: bernoulli
         name: is_voided
+      - distribution:
+          parameters:
+            clothing:
+              baseline_value: 0.5
+              conditional_effects:
+                - conditions:
+                    - column: experiment
+                      value: checkout_process
+                    - column: variant
+                      value: simplified
+                  effect: -0.005
+            cooking:
+              baseline_value: 0.3
+            electronics:
+              baseline_value: 0.2
+          type: categorical
+        name: item_type
     frequency_distribution:
       parameters:
         rate:
