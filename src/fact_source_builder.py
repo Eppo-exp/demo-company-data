@@ -27,4 +27,7 @@ class FactSourceBuilder:
             }
         }
 
+        if self.fact_source_configs.get('include_experiment_key'):
+            fact_values['experiment'] = exploded_assignments['experiment']
+
         return pd.DataFrame(fact_values)

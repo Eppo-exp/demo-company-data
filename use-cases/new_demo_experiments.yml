@@ -646,6 +646,7 @@ assignments:
   sample_size: 120000
 fact_sources:
   New_Subscriptions:
+    include_experiment_key: True
     fact_values:
       - distribution:
           parameters:
