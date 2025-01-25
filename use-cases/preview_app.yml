@@ -1,0 +1,226 @@
+sample_size: 50000
+start_date: '2024-09-01'
+end_date: '2024-11-01'
+type: standard
+assignments_table_name: experiment_assignment
+
+assignments:
+  entity_name: User
+  sample_size: 120000
+  dimensions:
+    entity:
+      device_type:
+        name: Device Type
+        values:
+          - id: desktop
+            name: Desktop
+            weight: 0.2
+          - id: ios
+            name: iOS
+            weight: 0.4
+          - id: android
+            name: Android
+            weight: 0.4
+      user_persona:
+        name: User Persona
+        values:
+          - id: designer
+            name: Designer
+            weight: 0.25
+          - id: casual_user
+            name: Casual User
+            weight: 0.25
+          - id: business
+            name: Business
+            weight: 0.25
+          - id: other
+            name: Other
+            weight: 0.25
+  experiments:
+    pricing-details-on-pdp:
+      name: Pricing Details on PDP
+      start_date: '2024-09-01'
+      end_date: '2024-11-01'
+      variants:
+        - id: disabled
+          name: Don't Show Details
+          weight: 0.5
+        - id: enabled
+          name: Show Details
+          weight: 0.5
+    price-search-algo:
+      name: Include Pricing Context in Search Algorithm
+      start_date: '2024-10-20'
+      end_date: '2024-12-01'
+      variants:
+        - id: v1
+          name: No Price Context
+          weight: 0.5
+        - id: v2
+          name: Using Price Context
+          weight: 0.5
+    pdp-layout:
+      name: PDP Layout Redesign
+      start_date: '2024-09-01'
+      end_date: '2024-11-01'
+      variants:
+        - id: control
+          name: Control
+          weight: 0.5
+        - id: treatment
+          name: Treatment
+          weight: 0.5
+
+fact_sources:
+  f_sessions:
+    name: Sessions
+    frequency_distribution:
+      type: constant
+      parameters:
+        value:
+          baseline_value: 1
+    fact_values:
+      - name: revenue
+        distribution:
+          type: normal
+          parameters:
+            average:
+              baseline_value: 38   # Control average revenue
+              conditional_effects:
+                - effect: 2
+                  conditions:
+                    - column: experiment
+                      value: pricing-details-on-pdp
+                    - column: variant
+                      value: enabled
+                - effect: -2
+                  conditions:
+                    - column: experiment
+                      value: pricing-details-on-pdp
+                    - column: variant
+                      value: enabled
+                    - column: device_type
+                      value: android
+                - effect: 12
+                  conditions:
+                    - column: user_persona
+                      value: designer
+                - effect: 4
+                  conditions:
+                    - column: user_persona
+                      value: casual_user
+                - effect: -4
+                  conditions:
+                    - column: user_persona
+                      value: business
+                - effect: -12
+                  conditions:
+                    - column: user_persona
+                      value: other
+            standard_deviation:
+              baseline_value: 18
+      - name: page_views
+        distribution: 
+          type: poisson
+          parameters:
+            rate:
+              baseline_value: 4
+
+  f_add_to_cart:
+    name: Add to Cart
+    frequency_distribution:
+      type: bernoulli
+      parameters:
+        rate:
+          baseline_value: 0.12   # Control rate of 12%
+          conditional_effects:
+            - effect: -0.007      # Decrease by 1% to reach 11% for variant
+              conditions:
+                - column: experiment
+                  value: pricing-details-on-pdp
+                - column: variant
+                  value: enabled
+    fact_values:
+      - name: add_to_cart
+        distribution:
+          type: constant
+          parameters:
+            value:
+              baseline_value: 1
+
+  f_checkout:
+    name: Checkout
+    frequency_distribution:
+      type: bernoulli
+      parameters:
+        rate:
+          baseline_value: 0.04   # Control rate of 12%
+          conditional_effects:
+            - effect: 0.0015      # Decrease by 1% to reach 11% for variant
+              conditions:
+                - column: experiment
+                  value: pricing-details-on-pdp
+                - column: variant
+                  value: enabled
+    fact_values:
+      - name: checkout
+        distribution:
+          type: constant
+          parameters:
+            value:
+              baseline_value: 1
+      - name: basket_size
+        distribution:
+          type: normal
+          parameters:
+            average:
+              baseline_value: 3
+            standard_deviation:
+              baseline_value: 1
+
+  f_returns:
+    name: Returns
+    frequency_distribution:
+      type: bernoulli
+      parameters:
+        rate:
+          baseline_value: 0.07
+          conditional_effects:
+          - effect: -0.04
+            conditions:
+              - column: user_persona
+                value: designer
+          - effect: -0.02
+            conditions:
+              - column: user_persona
+                value: casual_user
+          - effect: 0.02
+            conditions:
+              - column: user_persona
+                value: business
+          - effect: 0.04
+            conditions:
+              - column: user_persona
+                value: other
+    fact_values:
+      - name: support_ticket
+        distribution:
+          type: constant
+          parameters:
+            value:
+              baseline_value: 1
+
+  f_support_tickets:
+    name: Support Tickets
+    frequency_distribution:
+      type: bernoulli
+      parameters:
+        rate:
+          baseline_value: 0.06
+    fact_values:
+      - name: support_ticket
+        distribution:
+          type: constant
+          parameters:
+            value:
+              baseline_value: 1
