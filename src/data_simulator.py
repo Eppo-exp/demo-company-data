@@ -39,9 +39,7 @@ class DataSimulator:
         self.fact_source_tables = {}
         for fact_source_id, fact_source_info in self.config['fact_sources'].items():
             fact_source_builder = FactSourceBuilder(self.assignments,
-                                                    fact_source_info, fact_entity,
-                                                    self.config['start_date'],
-                                                    self.config['end_date'])
+                                                    fact_source_info, fact_entity)
 
             self.fact_source_tables[fact_source_id] = fact_source_builder.simulate()
 
