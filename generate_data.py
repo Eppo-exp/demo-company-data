@@ -1,6 +1,8 @@
-import yaml
 import argparse
 
+import yaml
+
+from src.config_parser import ConfigParser
 from src.data_simulator import DataSimulator
 from src.snowflake_connector import SnowflakeConnector
 
@@ -13,10 +15,9 @@ args = parser.parse_args()
 with open(PROFILE_FILE_PATH) as file:
     profile = yaml.safe_load(file)
 
-with open(args.use_case_file, 'r') as file:
-    config = yaml.safe_load(file)
+config_parser = ConfigParser.from_file(args.use_case_file)
 
-generator = DataSimulator(config)
+generator = DataSimulator(config_parser)
 generator.simulate()
 generator.log_data_summary()
 
