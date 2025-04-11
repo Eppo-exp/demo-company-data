@@ -1,6 +1,7 @@
+import hashlib
+
 import numpy as np
 import pandas as pd
-import hashlib
 
 from src.helpers import draw_from_data_and_configs, duplicate_rows
 
@@ -36,7 +37,8 @@ class AssignmentSimulator:
         assignment_weights = np.array([var.get('weight', 1) for var in exp_info['variants']])
         assigment_probabilities = assignment_weights / assignment_weights.sum()
         return pd.DataFrame({
-            self.entity_name: [hashlib.md5(str(x).encode()).hexdigest() for x in np.arange(self.sample_size)],
+            self.entity_name: [hashlib.md5(f"{exp_id}{str(x)}".encode()).hexdigest() for x in
+                               np.arange(self.sample_size)],
             'experiment': exp_id,
             'start_date': exp_info['start_date'],
             'end_date': exp_info['end_date'],
@@ -73,7 +75,7 @@ class ClusteredAssignmentSimulator(AssignmentSimulator):
         cluster_sizes = self._draw_cluster_sizes(df)
 
         df = duplicate_rows(df, cluster_sizes)
-        
+
         df[self.subentity_name] = [hashlib.md5(str(x).encode()).hexdigest() for x in np.arange(len(df))]
 
         return df
