@@ -5,6 +5,7 @@ import yaml
 from src.analysis_sync import AnalysisSync
 from src.api_helper import EppoAPIHelper
 from src.config_parser import ConfigParser
+
 from src.data_simulator import DataSimulator
 from src.snowflake_connector import SnowflakeConnector
 
@@ -16,6 +17,9 @@ parser.add_argument('--start-date-override', type=str,
                     help='Override start date (YYYY-MM-DD); shifts all dates in the use case file such that the '
                          'earliest experiment in the file starts on this date')
 args = parser.parse_args()
+
+# Setting the seed so that results are consistent across runs
+np.random.seed(777)
 
 with open(PROFILE_FILE_PATH) as file:
     profile = yaml.safe_load(file)
