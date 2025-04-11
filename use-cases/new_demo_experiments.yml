@@ -1,5 +1,3 @@
-start_date: '2024-05-01'
-end_date: '2024-06-01'
 assignments_table_name: ecommerce_assignments
 type: standard
 assignments:
@@ -65,12 +63,13 @@ assignments:
             name: False
             weight: 0.6
 
+
   entity_name: User
   experiments:
     ad_frequency:
-      end_date: '2024-07-15'
+      end_date: '2024-01-15'
       name: Ad Frequency Optimization Experiment
-      start_date: '2024-06-15'
+      start_date: '2024-01-01'
       variants:
         - id: high_frequency
           name: high_frequency
@@ -79,9 +78,9 @@ assignments:
           name: low_frequency
           weight: 0.5
     article_recommendation:
-      end_date: '2024-07-06'
+      end_date: '2024-01-18'
       name: Article Recommendation Experiment
-      start_date: '2024-06-06'
+      start_date: '2024-01-04'
       variants:
         - id: popular_articles
           name: popular_articles
@@ -90,9 +89,9 @@ assignments:
           name: personalized_recommendations
           weight: 0.5
     banner_text:
-      end_date: '2024-08-26'
+      end_date: '2024-01-21'
       name: Banner Text Experiment
-      start_date: '2024-07-27'
+      start_date: '2024-01-07'
       variants:
         - id: short_text
           name: short_text
@@ -101,9 +100,9 @@ assignments:
           name: long_text
           weight: 0.5
     blog_layout:
-      end_date: '2024-06-21'
+      end_date: '2024-01-24'
       name: Blog Layout Experiment
-      start_date: '2024-05-22'
+      start_date: '2024-01-10'
       variants:
         - id: grid_layout
           name: grid_layout
@@ -112,10 +111,10 @@ assignments:
           name: list_layout
           weight: 0.5
     campaign_team_package_upsell:
-      end_date: '2024-06-01'
+      end_date: '2024-01-27'
       name:
-        Campaign: Team Package Upsell
-      start_date: '2024-05-01'
+        'Campaign: Team Package Upsell'
+      start_date: '2024-01-13'
       variants:
         - id: email_1
           name: Email 1
@@ -124,9 +123,9 @@ assignments:
           name: Email 2
           weight: 0.5
     cart_icon:
-      end_date: '2024-05-19'
+      end_date: '2024-01-30'
       name: Cart Icon Experiment
-      start_date: '2024-04-19'
+      start_date: '2024-01-16'
       variants:
         - id: icon_only
           name: icon_only
@@ -135,9 +134,9 @@ assignments:
           name: icon_with_text
           weight: 0.5
     chatbot:
-      end_date: '2024-05-28'
+      end_date: '2024-02-02'
       name: Chatbot Experiment
-      start_date: '2024-04-28'
+      start_date: '2024-01-19'
       variants:
         - id: basic_chatbot
           name: basic_chatbot
@@ -146,9 +145,9 @@ assignments:
           name: advanced_chatbot
           weight: 0.5
     chatbot_response_speed:
-      end_date: '2024-08-11'
+      end_date: '2024-02-05'
       name: Chatbot Response Speed Experiment
-      start_date: '2024-07-12'
+      start_date: '2024-01-22'
       variants:
         - id: fast_response
           name: fast_response
@@ -157,9 +156,9 @@ assignments:
           name: slow_response
           weight: 0.5
     checkout_process:
-      end_date: '2024-06-01'
+      end_date: '2024-02-15'
       name: Checkout Process Experiment
-      start_date: '2024-05-01'
+      start_date: '2024-01-25'
       variants:
         - id: standard
           name: Standard Checkout
@@ -168,9 +167,9 @@ assignments:
           name: Simplified Checkout
           weight: 0.5
     checkout_progress_indicator:
-      end_date: '2024-08-23'
+      end_date: '2024-02-11'
       name: Checkout Progress Indicator Experiment
-      start_date: '2024-07-24'
+      start_date: '2024-01-28'
       variants:
         - id: visible_progress
           name: visible_progress
@@ -179,9 +178,9 @@ assignments:
           name: hidden_progress
           weight: 0.5
     color_scheme:
-      end_date: '2024-07-18'
+      end_date: '2024-02-14'
       name: Website Color Scheme Experiment
-      start_date: '2024-06-18'
+      start_date: '2024-01-31'
       variants:
         - id: light_theme
           name: light_theme
@@ -190,9 +189,9 @@ assignments:
           name: dark_theme
           weight: 0.5
     contextual_bandit_cvr:
-      end_date: '2024-09-10'
+      end_date: '2024-02-24'
       name: Contextual Bandits for CVR Optimization
-      start_date: '2024-08-11'
+      start_date: '2024-02-03'
       variants:
         - id: contextual_bandit
           name: contextual_bandit
@@ -201,9 +200,9 @@ assignments:
           name: control_group
           weight: 0.5
     coupon_code_placement:
-      end_date: '2024-08-29'
+      end_date: '2024-02-20'
       name: Coupon Code Placement Experiment
-      start_date: '2024-07-30'
+      start_date: '2024-02-06'
       variants:
         - id: checkout_page
           name: checkout_page
@@ -212,9 +211,9 @@ assignments:
           name: cart_page
           weight: 0.5
     cta_button_color:
-      end_date: '2024-07-24'
+      end_date: '2024-02-23'
       name: CTA Button Color Experiment
-      start_date: '2024-06-24'
+      start_date: '2024-02-09'
       variants:
         - id: red_button
           name: red_button
@@ -223,9 +222,9 @@ assignments:
           name: green_button
           weight: 0.5
     customer_support:
-      end_date: '2024-06-15'
+      end_date: '2024-02-26'
       name: Customer Support Experiment
-      start_date: '2024-05-16'
+      start_date: '2024-02-12'
       variants:
         - id: live_chat
           name: live_chat
@@ -234,9 +233,9 @@ assignments:
           name: ticket_system
           weight: 0.5
     dynamic_pricing:
-      end_date: '2024-07-09'
+      end_date: '2024-02-29'
       name: Dynamic Pricing Experiment
-      start_date: '2024-06-09'
+      start_date: '2024-02-15'
       variants:
         - id: fixed_pricing
           name: fixed_pricing
@@ -245,9 +244,9 @@ assignments:
           name: dynamic_pricing
           weight: 0.5
     email_subject:
-      end_date: '2024-05-07'
+      end_date: '2024-03-03'
       name: Email Subject Experiment
-      start_date: '2024-04-07'
+      start_date: '2024-02-18'
       variants:
         - id: short_subject
           name: short_subject
@@ -256,9 +255,9 @@ assignments:
           name: long_subject
           weight: 0.5
     faq_layout:
-      end_date: '2024-05-25'
+      end_date: '2024-03-06'
       name: FAQ Layout Experiment
-      start_date: '2024-04-25'
+      start_date: '2024-02-21'
       variants:
         - id: list_layout
           name: list_layout
@@ -267,9 +266,9 @@ assignments:
           name: accordion_layout
           weight: 0.5
     footer_design:
-      end_date: '2024-05-16'
+      end_date: '2024-03-09'
       name: Footer Design Experiment
-      start_date: '2024-04-16'
+      start_date: '2024-02-24'
       variants:
         - id: compact
           name: compact
@@ -278,9 +277,9 @@ assignments:
           name: extended
           weight: 0.5
     form_field_validation:
-      end_date: '2024-08-02'
+      end_date: '2024-03-12'
       name: Form Field Validation Experiment
-      start_date: '2024-07-03'
+      start_date: '2024-02-27'
       variants:
         - id: client_side
           name: client_side
@@ -289,9 +288,9 @@ assignments:
           name: server_side
           weight: 0.5
     headline_optimization:
-      end_date: '2024-06-30'
+      end_date: '2024-03-15'
       name: Headline Optimization with Contextual Bandits
-      start_date: '2024-05-31'
+      start_date: '2024-03-01'
       variants:
         - id: bandit_strategy_1
           name: bandit_strategy_1
@@ -300,9 +299,9 @@ assignments:
           name: bandit_strategy_2
           weight: 0.5
     homepage_layout:
-      end_date: '2024-06-01'
+      end_date: '2024-03-25'
       name: Homepage Layout Experiment
-      start_date: '2024-05-01'
+      start_date: '2024-03-04'
       variants:
         - id: original
           name: Original Layout
@@ -311,9 +310,9 @@ assignments:
           name: New Layout
           weight: 0.5
     image_quality:
-      end_date: '2024-08-08'
+      end_date: '2024-03-21'
       name: Image Quality Experiment
-      start_date: '2024-07-09'
+      start_date: '2024-03-07'
       variants:
         - id: low_quality
           name: low_quality
@@ -322,9 +321,9 @@ assignments:
           name: high_quality
           weight: 0.5
     image_slider:
-      end_date: '2024-08-20'
+      end_date: '2024-03-24'
       name: Image Slider Experiment
-      start_date: '2024-07-21'
+      start_date: '2024-03-10'
       variants:
         - id: automatic_slider
           name: automatic_slider
@@ -333,9 +332,9 @@ assignments:
           name: manual_slider
           weight: 0.5
     loading_spinner_design:
-      end_date: '2024-09-01'
+      end_date: '2024-03-27'
       name: Loading Spinner Design Experiment
-      start_date: '2024-08-02'
+      start_date: '2024-03-13'
       variants:
         - id: circular_spinner
           name: circular_spinner
@@ -344,9 +343,9 @@ assignments:
           name: linear_spinner
           weight: 0.5
     login_method:
-      end_date: '2024-06-24'
+      end_date: '2024-03-30'
       name: Login Method Experiment
-      start_date: '2024-05-25'
+      start_date: '2024-03-16'
       variants:
         - id: password
           name: password
@@ -355,9 +354,9 @@ assignments:
           name: otp
           weight: 0.5
     loyalty_program:
-      end_date: '2024-06-03'
+      end_date: '2024-04-02'
       name: Loyalty Program Experiment
-      start_date: '2024-05-04'
+      start_date: '2024-03-19'
       variants:
         - id: points_system
           name: points_system
@@ -366,9 +365,9 @@ assignments:
           name: tier_system
           weight: 0.5
     mobile_menu:
-      end_date: '2024-05-13'
+      end_date: '2024-04-05'
       name: Mobile Menu Experiment
-      start_date: '2024-04-13'
+      start_date: '2024-03-22'
       variants:
         - id: hamburger
           name: hamburger
@@ -377,9 +376,9 @@ assignments:
           name: bottom_nav
           weight: 0.5
     modal_popup_timing:
-      end_date: '2024-09-04'
+      end_date: '2024-04-08'
       name: Modal Popup Timing Experiment
-      start_date: '2024-08-05'
+      start_date: '2024-03-25'
       variants:
         - id: immediate_popup
           name: immediate_popup
@@ -388,9 +387,9 @@ assignments:
           name: delayed_popup
           weight: 0.5
     model_evaluation:
-      end_date: '2024-06-01'
+      end_date: '2024-04-11'
       name: Model Evaluation Experiment
-      start_date: '2024-05-01'
+      start_date: '2024-03-28'
       variants:
         - id: model_a
           name: Model A
@@ -398,21 +397,10 @@ assignments:
         - id: model_b
           name: Model B
           weight: 0.5
-    new_user_onboarding:
-      end_date: '2024-06-01'
-      name: New User Onboarding
-      start_date: '2024-05-01'
-      variants:
-        - id: control
-          name: Control Onboarding
-          weight: 0.5
-        - id: test
-          name: Test Onboarding
-          weight: 0.5
     newsletter_frequency:
-      end_date: '2024-08-05'
+      end_date: '2024-04-17'
       name: Newsletter Frequency Experiment
-      start_date: '2024-07-06'
+      start_date: '2024-04-03'
       variants:
         - id: weekly_newsletter
           name: weekly_newsletter
@@ -421,9 +409,9 @@ assignments:
           name: biweekly_newsletter
           weight: 0.5
     newsletter_signup:
-      end_date: '2024-06-27'
+      end_date: '2024-04-20'
       name: Newsletter Signup Experiment
-      start_date: '2024-05-28'
+      start_date: '2024-04-06'
       variants:
         - id: popup
           name: popup
@@ -432,9 +420,9 @@ assignments:
           name: inline
           weight: 0.5
     onboarding_tooltips:
-      end_date: '2024-07-30'
+      end_date: '2024-04-23'
       name: Onboarding Tooltips Experiment
-      start_date: '2024-06-30'
+      start_date: '2024-04-09'
       variants:
         - id: enabled_tooltips
           name: enabled_tooltips
@@ -443,9 +431,9 @@ assignments:
           name: disabled_tooltips
           weight: 0.5
     personalized_ads:
-      end_date: '2024-07-03'
+      end_date: '2024-04-26'
       name: Personalized Ads with Contextual Bandits
-      start_date: '2024-06-03'
+      start_date: '2024-04-12'
       variants:
         - id: contextual_bandits
           name: contextual_bandits
@@ -454,9 +442,9 @@ assignments:
           name: fixed_rule_based
           weight: 0.5
     personalized_email_subject:
-      end_date: '2024-08-17'
+      end_date: '2024-04-29'
       name: Personalized Email Subject Experiment
-      start_date: '2024-07-18'
+      start_date: '2024-04-15'
       variants:
         - id: personalized_subject
           name: personalized_subject
@@ -465,9 +453,9 @@ assignments:
           name: generic_subject
           weight: 0.5
     personalized_product_page:
-      end_date: '2024-09-07'
+      end_date: '2024-05-09'
       name: Personalized Product Page Experiment
-      start_date: '2024-08-08'
+      start_date: '2024-04-18'
       variants:
         - id: personalized_product_page
           name: personalized_product_page
@@ -476,9 +464,9 @@ assignments:
           name: standard_product_page
           weight: 0.5
     pricing_page:
-      end_date: '2024-05-04'
+      end_date: '2024-05-05'
       name: Pricing Page Experiment
-      start_date: '2024-04-04'
+      start_date: '2024-04-21'
       variants:
         - id: standard
           name: standard
@@ -487,9 +475,9 @@ assignments:
           name: tiered
           weight: 0.5
     product_filter:
-      end_date: '2024-05-31'
+      end_date: '2024-05-08'
       name: Product Filter Experiment
-      start_date: '2024-05-01'
+      start_date: '2024-04-24'
       variants:
         - id: standard_filter
           name: standard_filter
@@ -498,9 +486,9 @@ assignments:
           name: advanced_filter
           weight: 0.5
     product_list_order:
-      end_date: '2024-07-27'
+      end_date: '2024-05-11'
       name: Product List Order Experiment
-      start_date: '2024-06-27'
+      start_date: '2024-04-27'
       variants:
         - id: alphabetical_order
           name: alphabetical_order
@@ -508,21 +496,10 @@ assignments:
         - id: best_selling_order
           name: best_selling_order
           weight: 0.5
-    product_recommendations:
-      end_date: '2025-04-01'
-      name: Product Recommendations Experiment
-      start_date: '2025-03-01'
-      variants:
-        - id: standard
-          name: Standard Recommendations
-          weight: 0.5
-        - id: personalized
-          name: Personalized Recommendations
-          weight: 0.5
     promotional_banners:
-      end_date: '2024-06-01'
+      end_date: '2024-05-17'
       name: Promotional Banners Experiment
-      start_date: '2024-05-01'
+      start_date: '2024-05-03'
       variants:
         - id: static
           name: Static Banners
@@ -531,9 +508,9 @@ assignments:
           name: Dynamic Banners
           weight: 0.5
     push_notification:
-      end_date: '2024-06-06'
+      end_date: '2024-05-20'
       name: Push Notification Experiment
-      start_date: '2024-05-07'
+      start_date: '2024-05-06'
       variants:
         - id: immediate
           name: immediate
@@ -542,9 +519,9 @@ assignments:
           name: scheduled
           weight: 0.5
     push_notification_timing:
-      end_date: '2024-07-12'
+      end_date: '2024-05-23'
       name: Push Notification Timing Experiment
-      start_date: '2024-06-12'
+      start_date: '2024-05-09'
       variants:
         - id: immediate
           name: immediate
@@ -553,9 +530,9 @@ assignments:
           name: delayed
           weight: 0.5
     referral_program:
-      end_date: '2024-06-18'
+      end_date: '2024-05-26'
       name: Referral Program Experiment
-      start_date: '2024-05-19'
+      start_date: '2024-05-12'
       variants:
         - id: discount_based
           name: discount_based
@@ -564,10 +541,10 @@ assignments:
           name: points_based
           weight: 0.5
     reports_generation:
-      end_date: '2024-06-01'
+      end_date: '2024-05-29'
       name:
         Reports Generation: Llama 3 vs. GPT 4o
-      start_date: '2024-05-01'
+      start_date: '2024-05-15'
       variants:
         - id: llama_3
           name: Llama 3
@@ -576,9 +553,9 @@ assignments:
           name: GPT 4o
           weight: 0.5
     search_autocomplete:
-      end_date: '2024-05-22'
+      end_date: '2024-06-01'
       name: Search Autocomplete Experiment
-      start_date: '2024-04-22'
+      start_date: '2024-05-18'
       variants:
         - id: standard_autocomplete
           name: standard_autocomplete
@@ -587,9 +564,9 @@ assignments:
           name: enhanced_autocomplete
           weight: 0.5
     search_functionality:
-      end_date: '2024-06-01'
+      end_date: '2024-06-04'
       name: Search Functionality Experiment
-      start_date: '2024-05-01'
+      start_date: '2024-05-21'
       variants:
         - id: basic
           name: Basic Search
@@ -598,9 +575,9 @@ assignments:
           name: Advanced Search
           weight: 0.5
     signup_form:
-      end_date: '2024-05-01'
+      end_date: '2024-06-07'
       name: Signup Form Experiment
-      start_date: '2024-04-01'
+      start_date: '2024-05-24'
       variants:
         - id: short
           name: short
@@ -609,9 +586,9 @@ assignments:
           name: long
           weight: 0.5
     social_share_buttons:
-      end_date: '2024-08-14'
+      end_date: '2024-06-10'
       name: Social Share Buttons Experiment
-      start_date: '2024-07-15'
+      start_date: '2024-05-27'
       variants:
         - id: visible_buttons
           name: visible_buttons
@@ -620,9 +597,9 @@ assignments:
           name: hidden_buttons
           weight: 0.5
     survey_prompt:
-      end_date: '2024-06-12'
+      end_date: '2024-06-13'
       name: Survey Prompt Experiment
-      start_date: '2024-05-13'
+      start_date: '2024-05-30'
       variants:
         - id: popup
           name: popup
@@ -631,9 +608,9 @@ assignments:
           name: in_page
           weight: 0.5
     user_profile:
-      end_date: '2024-05-10'
+      end_date: '2024-06-16'
       name: User Profile Experiment
-      start_date: '2024-04-10'
+      start_date: '2024-06-02'
       variants:
         - id: minimal
           name: minimal
@@ -642,9 +619,9 @@ assignments:
           name: detailed
           weight: 0.5
     video_ad:
-      end_date: '2024-06-09'
+      end_date: '2024-06-19'
       name: Video Ad Experiment
-      start_date: '2024-05-10'
+      start_date: '2024-06-05'
       variants:
         - id: short_ad
           name: short_ad
@@ -653,9 +630,9 @@ assignments:
           name: long_ad
           weight: 0.5
     video_length:
-      end_date: '2024-07-21'
+      end_date: '2024-06-29'
       name: Video Length Experiment
-      start_date: '2024-06-21'
+      start_date: '2024-06-08'
       variants:
         - id: short_videos
           name: short_videos
@@ -663,7 +640,30 @@ assignments:
         - id: long_videos
           name: long_videos
           weight: 0.5
-  sample_size: 150000
+    product_recommendations:
+      end_date: '2024-06-23'
+      name: Product Recommendations Experiment
+      start_date: '2024-06-09'
+      variants:
+        - id: standard
+          name: Standard Recommendations
+          weight: 0.5
+        - id: personalized
+          name: Personalized Recommendations
+          weight: 0.5
+    new_user_onboarding:
+      end_date: '2024-06-23'
+      name: New User Onboarding
+      start_date: '2024-06-09'
+      variants:
+        - id: control
+          name: Control Onboarding
+          weight: 0.5
+        - id: test
+          name: Test Onboarding
+          weight: 0.5
+
+  sample_size: 200000
 fact_sources:
   New_Subscriptions:
     fact_values:
@@ -705,6 +705,89 @@ fact_sources:
       type: bernoulli
     name: New Subscriptions
   Orders:
+    frequency_distribution:
+      parameters:
+        rate:
+          baseline_value: 0.01
+          conditional_effects:
+            - conditions:
+                - column: purchase_prediction
+                  value: 'true'
+              effect: 0.65
+            - conditions:
+                - column: experiment
+                  value: product_recommendations
+                - column: variant
+                  value: personalized
+              effect: 0.0025
+            - conditions:
+                - column: experiment
+                  value: homepage_layout
+                - column: variant
+                  value: new
+              effect: 0.0025
+            - conditions:
+                - column: experiment
+                  value: checkout_process
+                - column: variant
+                  value: simplified
+              effect: 0.0025
+            - conditions:
+                - column: experiment
+                  value: personalized_product_page
+                - column: variant
+                  value: personalized_product_page
+              effect: 0.0025
+            - conditions:
+                - column: experiment
+                  value: dynamic_pricing
+                - column: variant
+                  value: dynamic_pricing
+              effect: -0.002
+            - conditions:
+                - column: experiment
+                  value: chatbot
+                - column: variant
+                  value: advanced_chatbot
+              effect: -0.0025
+            - conditions:
+                - column: experiment
+                  value: modal_popup_timing
+                - column: variant
+                  value: immediate_popup
+              effect: -0.0025
+            - conditions:
+                - column: experiment
+                  value: search_functionality
+                - column: variant
+                  value: advanced
+              effect: 0.0025
+            - conditions:
+                - column: experiment
+                  value: product_filter
+                - column: variant
+                  value: advanced_filter
+              effect: 0.0025
+            - conditions:
+                - column: experiment
+                  value: newsletter_signup
+                - column: variant
+                  value: popup
+              effect: -0.0025
+            - conditions:
+                - column: experiment
+                  value: social_share_buttons
+                - column: variant
+                  value: visible_buttons
+              effect: -0.0025
+            - conditions:
+                - column: experiment
+                  value: video_ad
+                - column: variant
+                  value: long_ad
+              effect: 0.0025
+      type: bernoulli
+    name: Orders
     fact_values:
       - distribution:
           parameters:
@@ -716,13 +799,91 @@ fact_sources:
                       value: homepage_layout
                     - column: variant
                       value: new
-                  effect: 0.12
+                  effect: 0.02
                 - conditions:
                     - column: experiment
                       value: product_recommendations
                     - column: variant
                       value: personalized
-                  effect: 0.06
+                  effect: 0.02
+                - conditions:
+                    - column: experiment
+                      value: checkout_process
+                    - column: variant
+                      value: simplified
+                  effect: 0.02
+                - conditions:
+                    - column: experiment
+                      value: personalized_product_page
+                    - column: variant
+                      value: personalized_product_page
+                  effect: 0.02
+                - conditions:
+                    - column: experiment
+                      value: dynamic_pricing
+                    - column: variant
+                      value: dynamic_pricing
+                  effect: -0.02
+                - conditions:
+                    - column: experiment
+                      value: chatbot
+                    - column: variant
+                      value: advanced_chatbot
+                  effect: -0.02
+                - conditions:
+                    - column: experiment
+                      value: modal_popup_timing
+                    - column: variant
+                      value: immediate_popup
+                  effect: -0.02
+                - conditions:
+                    - column: experiment
+                      value: promotional_banners
+                    - column: variant
+                      value: dynamic
+                  effect: 0.02
+                - conditions:
+                    - column: experiment
+                      value: contextual_bandit_cvr
+                    - column: variant
+                      value: contextual_bandit
+                  effect: 0.02
+                - conditions:
+                    - column: experiment
+                      value: form_field_validation
+                    - column: variant
+                      value: client_side
+                  effect: -0.02
+                - conditions:
+                    - column: experiment
+                      value: search_functionality
+                    - column: variant
+                      value: advanced
+                  effect: 0.02
+                - conditions:
+                    - column: experiment
+                      value: product_filter
+                    - column: variant
+                      value: advanced_filter
+                  effect: 0.02
+                - conditions:
+                    - column: experiment
+                      value: newsletter_signup
+                    - column: variant
+                      value: popup
+                  effect: -0.02
+                - conditions:
+                    - column: experiment
+                      value: social_share_buttons
+                    - column: variant
+                      value: visible_buttons
+                  effect: -0.02
+                - conditions:
+                    - column: experiment
+                      value: video_ad
+                    - column: variant
+                      value: long_ad
+                  effect: -0.02
                 - conditions:
                     - column: device_type
                       value: mobile
@@ -773,23 +934,6 @@ fact_sources:
               baseline_value: 0.2
           type: categorical
         name: item_type
-    frequency_distribution:
-      parameters:
-        rate:
-          baseline_value: 0.01
-          conditional_effects:
-            - conditions:
-                - column: purchase_prediction
-                  value: 'true'
-              effect: 0.65
-            - conditions:
-                - column: experiment
-                  value: product_recommendations
-                - column: variant
-                  value: personalized
-              effect: 0.002
-      type: bernoulli
-    name: Orders
   Sessions:
     fact_values:
       - distribution:
@@ -990,3 +1134,199 @@ fact_sources:
       type: poisson
     name: Retention
 
+  page_loads:
+    name: Page Loads
+    frequency_distribution:
+      type: poisson
+      parameters:
+        rate:
+          baseline_value: 5
+    fact_values:
+      - name: page_load_time_ms
+        distribution:
+          type: lognormal
+          parameters:
+            average:
+              baseline_value: 60.5
+              conditional_effects:
+                - conditions:
+                    - column: experiment
+                      value: ad_frequency
+                    - column: variant
+                      value: high_frequency
+                  effect: 1
+                - conditions:
+                    - column: device_type
+                      value: mobile
+                  effect: 1.0
+            standard_deviation:
+              baseline_value: 40
+
+  conversion_funnel:
+    name: Conversion Funnel Events
+    frequency_distribution:
+      type: constant
+      parameters:
+        value:
+          baseline_value: 1
+    fact_values:
+      - name: funnel_stage
+        distribution:
+          type: categorical
+          parameters:
+            "0":
+              baseline_value: 0.4
+              conditional_effects:
+                - conditions:
+                    - column: experiment
+                      value: homepage_layout
+                    - column: variant
+                      value: new
+                  effect: -0.02
+                - conditions:
+                    - column: experiment
+                      value: checkout_process
+                    - column: variant
+                      value: simplified
+                  effect: -0.02
+                - conditions:
+                    - column: experiment
+                      value: personalized_product_page
+                    - column: variant
+                      value: personalized_product_page
+                  effect: -0.02
+            "1":
+              baseline_value: 0.3
+              conditional_effects:
+                - conditions:
+                    - column: experiment
+                      value: homepage_layout
+                    - column: variant
+                      value: new
+                  effect: 0.015
+                - conditions:
+                    - column: experiment
+                      value: checkout_process
+                    - column: variant
+                      value: simplified
+                  effect: 0.015
+                - conditions:
+                    - column: experiment
+                      value: personalized_product_page
+                    - column: variant
+                      value: personalized_product_page
+                  effect: 0.015
+                - conditions:
+                    - column: experiment
+                      value: product_filter
+                    - column: variant
+                      value: advanced_filter
+                  effect: 0.015
+                - conditions:
+                    - column: experiment
+                      value: search_functionality
+                    - column: variant
+                      value: advanced
+                  effect: 0.015
+            "2":
+              baseline_value: 0.2
+              conditional_effects:
+                - conditions:
+                    - column: experiment
+                      value: homepage_layout
+                    - column: variant
+                      value: new
+                  effect: 0.01
+                - conditions:
+                    - column: experiment
+                      value: checkout_process
+                    - column: variant
+                      value: simplified
+                  effect: 0.01
+                - conditions:
+                    - column: experiment
+                      value: personalized_product_page
+                    - column: variant
+                      value: personalized_product_page
+                  effect: 0.01
+                - conditions:
+                    - column: experiment
+                      value: product_filter
+                    - column: variant
+                      value: advanced_filter
+                  effect: 0.01
+                - conditions:
+                    - column: experiment
+                      value: search_functionality
+                    - column: variant
+                      value: advanced
+                  effect: 0.01
+                - conditions:
+                    - column: experiment
+                      value: checkout_progress_indicator
+                    - column: variant
+                      value: visible_progress
+                  effect: 0.01
+                - conditions:
+                    - column: experiment
+                      value: form_field_validation
+                    - column: variant
+                      value: client_side
+                  effect: 0.01
+            "3":
+              baseline_value: 0.1
+              conditional_effects:
+                - conditions:
+                    - column: experiment
+                      value: homepage_layout
+                    - column: variant
+                      value: new
+                  effect: 0.005
+                - conditions:
+                    - column: experiment
+                      value: checkout_process
+                    - column: variant
+                      value: simplified
+                  effect: 0.005
+                - conditions:
+                    - column: experiment
+                      value: personalized_product_page
+                    - column: variant
+                      value: personalized_product_page
+                  effect: 0.005
+                - conditions:
+                    - column: experiment
+                      value: product_filter
+                    - column: variant
+                      value: advanced_filter
+                  effect: 0.005
+                - conditions:
+                    - column: experiment
+                      value: search_functionality
+                    - column: variant
+                      value: advanced
+                  effect: 0.005
+                - conditions:
+                    - column: experiment
+                      value: checkout_progress_indicator
+                    - column: variant
+                      value: visible_progress
+                  effect: 0.005
+                - conditions:
+                    - column: experiment
+                      value: form_field_validation
+                    - column: variant
+                      value: client_side
+                  effect: 0.005
+                - conditions:
+                    - column: experiment
+                      value: loading_spinner_design
+                    - column: variant
+                      value: circular_spinner
+                  effect: 0.005
+                - conditions:
+                    - column: experiment
+                      value: promotional_banners
+                    - column: variant
+                      value: dynamic
+                  effect: 0.005

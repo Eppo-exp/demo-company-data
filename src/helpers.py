@@ -1,8 +1,12 @@
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
 
 from src.distribution import DISTRIBUTIONS
 from src.effect_calculator import ConditionalEffectCalculator, RandomEffectCalculator
+
+DATE_FORMAT = '%Y-%m-%d'
 
 
 def draw_from_data_and_configs(data, config):
@@ -40,3 +44,11 @@ def draw_datetime(start_dates, end_dates):
     end_timestamps = pd.to_datetime(end_dates).astype(int) // ONE_BILLION
 
     return pd.to_datetime(np.random.randint(start_timestamps, end_timestamps), unit='s')
+
+
+def string_to_date(date_str):
+    return datetime.strptime(date_str, DATE_FORMAT)
+
+
+def date_to_string(date):
+    return date.strftime(DATE_FORMAT)
