@@ -21,27 +21,22 @@ ASSSIGNMENT_BUILDERS = {
 
 
 class DataSimulator:
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, config_parser):
+        self.config_parser = config_parser
 
     def generate_assignments(self):
-        assignment_builder = ASSSIGNMENT_BUILDERS[self.config['type']](**self.config['assignments'])
+        type = self.config_parser.config['type']
+        assignments = self.config_parser.config['assignments']
+        assignment_builder = ASSSIGNMENT_BUILDERS[type](**assignments)
         self.assignments = assignment_builder.simulate()
 
-    def _get_fact_entity(self):
-        if self.config['assignments'].get('subentity_name'):
-            return self.config['assignments']['subentity_name']
-        return self.config['assignments']['entity_name']
-
     def simulate_facts(self):
-        fact_entity = self._get_fact_entity()
+        fact_entity = self.config_parser.fact_entity
 
         self.fact_source_tables = {}
-        for fact_source_id, fact_source_info in self.config['fact_sources'].items():
+        for fact_source_id, fact_source_info in self.config_parser.config['fact_sources'].items():
             fact_source_builder = FactSourceBuilder(self.assignments,
-                                                    fact_source_info, fact_entity,
-                                                    self.config['start_date'],
-                                                    self.config['end_date'])
+                                                    fact_source_info, fact_entity)
 
             self.fact_source_tables[fact_source_id] = fact_source_builder.simulate()
 
@@ -65,7 +60,7 @@ class DataSimulator:
     def push_to_snowflake(self, snowflake_connection):
         logger.info('pushing assignments table')
         snowflake_connection.push_table(
-            self.config['assignments_table_name'],
+            self.config_parser.config['assignments_table_name'],
             pd.DataFrame(self.assignments)
         )
 
