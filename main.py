@@ -9,16 +9,18 @@ from src.data_simulator import DataSimulator
 from src.snowflake_connector import SnowflakeConnector
 
 PROFILE_FILE_PATH = 'local/profile.yml'
-start_date_override = '2024-10-18'
 
 parser = argparse.ArgumentParser(description='Simulate experimentation data')
 parser.add_argument('use_case_file', metavar='use-case-file', type=str, help='A path to a use case yaml file')
+parser.add_argument('--start-date-override', type=str,
+                    help='Override start date (YYYY-MM-DD); shifts all dates in the use case file such that the '
+                         'earliest experiment in the file starts on this date')
 args = parser.parse_args()
 
 with open(PROFILE_FILE_PATH) as file:
     profile = yaml.safe_load(file)
 
-config_parser = ConfigParser.from_file(args.use_case_file, start_date_override)
+config_parser = ConfigParser.from_file(args.use_case_file, args.start_date_override)
 
 generator = DataSimulator(config_parser)
 generator.simulate()
